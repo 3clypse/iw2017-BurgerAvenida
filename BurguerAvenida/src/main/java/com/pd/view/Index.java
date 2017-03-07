@@ -17,7 +17,7 @@ public class Index extends UI {
 
 	@Override
      protected void init(VaadinRequest request) {
-         setContent(new Label("Index"));
+         setContent(new Label("Index")); 
      }
 	
 }
