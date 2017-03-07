@@ -1,0 +1,15 @@
+datasource:
+    url: jdbc:hsqldb:mem:dataSource
+    username: sa
+    password:
+---
+spring:
+  profiles.active: local
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+      dialect: org.hibernate.dialect.MySQL5Dialect
+  datasource:
+    url: jdbc:mysql://localhost:3306/badb?&useSSL=false
+    username: root
+    password: borrego
