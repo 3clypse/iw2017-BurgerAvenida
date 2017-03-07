@@ -23,3 +23,11 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+### Extra ###
+/bin
+*.jar
+*.war
+*.ear
+*.yml
+*.yaml
