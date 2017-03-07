@@ -40,4 +40,9 @@ public class ProductServiceImpl implements ProductService {
 		return Lists.newArrayList(productDao.findAll());
 	}
 
+	@Override
+	public void delete(Integer id) {
+		productDao.delete(id);
+	}
+
 }
