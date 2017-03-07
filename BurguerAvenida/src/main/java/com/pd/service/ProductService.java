@@ -8,6 +8,7 @@ public interface ProductService {
 
 	Product create();
 	Product read(Integer id);
+	void delete(Integer id);
 	List<Product> readAll();
 	
 }
