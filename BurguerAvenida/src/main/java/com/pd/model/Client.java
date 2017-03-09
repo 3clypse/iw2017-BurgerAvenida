@@ -30,7 +30,7 @@ public class Client implements Serializable {
 	@NotNull
 	private String address;
 	
-	@OneToMany(fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "client")
 	private List<Order> orders = new ArrayList<Order>();
 	
 	public Client() {
