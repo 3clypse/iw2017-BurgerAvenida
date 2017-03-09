@@ -43,7 +43,8 @@ public class Index extends UI {
 		repo.save(Arrays.asList(
 			new Client(1, "Nombre 1", 633455623, "Calle 1"),
 			new Client(2, "Nombre 2", 634321232, "Calle 2"),
-			new Client(3, "Nombre 3", 324324323, "Calle 3")
+			new Client(3, "Nombre 3", 324324323, "Calle 3"),
+			new Client(3, "Nombre 4", 234234324, "Calle 4")
 		));
 	}
 	
