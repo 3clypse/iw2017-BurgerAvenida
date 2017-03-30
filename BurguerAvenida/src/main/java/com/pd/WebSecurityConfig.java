@@ -35,8 +35,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-                .antMatchers("*/**").permitAll()
-                //.anyRequest().authenticated()
+                //.antMatchers("*/**").permitAll()
+                .anyRequest().authenticated()
+                .antMatchers("*/#!**").permitAll()
+                .antMatchers("*/#!About").permitAll()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll();
     }
 }
