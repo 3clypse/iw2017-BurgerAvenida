@@ -7,30 +7,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.pd.dao.ClientDao;
-import com.pd.dao.IngredientDao;
-import com.pd.service.ProductService;
+import com.pd.dto.UserPostDto;
+import com.pd.exception.UserAlreadyExistsException;
+import com.pd.service.security.UserService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class BurguerAvenidaApplicationTests {
-
-	@Autowired
-	private ProductService productService;
 	
 	@Autowired
-	private ClientDao clientDao;
-	
-	@Autowired
-	private IngredientDao ingredientDao;
+	UserService userService;
 	
 	@Test
 	public void contextLoads() {
+		
 	}
 	
 	@Ignore
 	public void testProduct() {
-		
+		UserPostDto userPostDto = new UserPostDto("darkborrego", "pass", "Pablo", "Borrego", "dark@borrego.com");
+		try {
+			userService.create(userPostDto);
+		} catch (UserAlreadyExistsException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
