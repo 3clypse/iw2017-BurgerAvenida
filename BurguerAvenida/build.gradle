@@ -41,3 +41,5 @@ dependencyManagement {
 		mavenBom "com.vaadin:vaadin-bom:8.0.0"
 	}
 }
+apply plugin: 'war'
+apply plugin: 'war'
