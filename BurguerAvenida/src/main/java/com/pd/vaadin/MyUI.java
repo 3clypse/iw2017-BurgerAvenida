@@ -2,6 +2,7 @@ package com.pd.vaadin;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.pd.vaadin.about.AboutView;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Viewport;
@@ -33,7 +34,7 @@ public class MyUI extends UI {
     protected  void showMainView() {
     	addStyleName(ValoTheme.UI_WITH_MENU);
         setContent(new MainScreen(MyUI.this));
-        getNavigator().navigateTo(getNavigator().getState());
+        getNavigator().navigateTo(AboutView.VIEW_NAME);
     }
 
     public static MyUI get() {
