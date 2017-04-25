@@ -14,9 +14,9 @@ public class GenericController {
 		return new ModelAndView("redirect:#!" + path);
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
-    public ModelAndView goHome() {
-		return new ModelAndView("redirect:#!");
-	}
+//	@RequestMapping(method = RequestMethod.GET)
+//    public ModelAndView goHome() {
+//		return new ModelAndView("redirect:#!");
+//	}
 	
 }
