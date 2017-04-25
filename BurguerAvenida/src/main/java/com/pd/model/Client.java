@@ -12,9 +12,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-@Entity(name = "cliente")
-@Table(name = "cliente")
-public class Cliente implements Serializable {
+@Entity(name = "client")
+@Table(name = "client")
+public class Client implements Serializable {
 	
 	/**
 	 * 
