@@ -11,6 +11,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -35,8 +36,8 @@ public class Order implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private OrderStatus status;
 
-	//@ManyToOne
-	//private Client client;
+	@ManyToOne
+	private Client client;
 	
 	public Order() {
 		super();
@@ -44,12 +45,12 @@ public class Order implements Serializable {
 		this.createdAt = new Date();
 	}
 	
-	/*public Order(Client client) {
+	public Order(Client client) {
 		super();
 		this.status = OrderStatus.OPENED;
 		this.createdAt = new Date();
 		this.client = client;
-	}*/
+	}
 	
 	@OneToMany(mappedBy = "orderObject")
 	private Set<OrderLine> lines = new HashSet<OrderLine>();
@@ -86,12 +87,12 @@ public class Order implements Serializable {
 		return createdAt;
 	}
 
-	/*public Client getClient() {
+	public Client getClient() {
 		return client;
 	}
 
 	public void setClient(Client client) {
 		this.client = client;
-	}*/
+	}
 
 }
