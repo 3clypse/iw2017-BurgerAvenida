@@ -7,10 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
-import javax.persistence.Table;
 
-@Entity(name = "orderline")
-@Table(name = "orderline")
+@Entity(name = "orderlines")
 public class OrderLine implements Serializable {
 
 	/**
@@ -26,7 +24,7 @@ public class OrderLine implements Serializable {
 	@MapsId("OrderId")
     @JoinColumn(name="order_id", insertable = false, updatable = false, nullable = false)
     @ManyToOne 
-    private Order order;
+    private Order orderObject;
 	
 	@MapsId("ProductId")
     @JoinColumn(name="product_id", insertable = false, updatable = false, nullable = false)
@@ -37,19 +35,19 @@ public class OrderLine implements Serializable {
 		super();
 	}
 
-	public OrderLine(Order order, Product product, Integer amount) {
+	public OrderLine(Order orderObject, Product product, Integer amount) {
 		super();
-		this.order = order;
+		this.orderObject = orderObject;
 		this.product = product;
-		this.id = new OrderLinePK(order.getId(), product.getId());
+		this.id = new OrderLinePK(orderObject.getId(), product.getId());
 		this.amount = amount;
 	}
 	
-	public OrderLine(Order order, Product product) {
+	public OrderLine(Order orderObject, Product product) {
 		super();
-		this.order = order;
+		this.orderObject = orderObject;
 		this.product = product;
-		this.id = new OrderLinePK(order.getId(), product.getId());
+		this.id = new OrderLinePK(orderObject.getId(), product.getId());
 	}
 
 	public Integer getAmount() {
@@ -61,7 +59,7 @@ public class OrderLine implements Serializable {
 	}
 
 	public Order getOrder() {
-		return order;
+		return orderObject;
 	}
 
 	public Product getProduct() {

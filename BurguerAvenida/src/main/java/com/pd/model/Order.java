@@ -11,14 +11,11 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-@Entity(name = "order")
-@Table(name = "order")
+@Entity(name = "orders")
 public class Order implements Serializable {
 
 	/**
@@ -38,8 +35,8 @@ public class Order implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private OrderStatus status;
 
-	@ManyToOne
-	private Client client;
+	//@ManyToOne
+	//private Client client;
 	
 	public Order() {
 		super();
@@ -47,14 +44,14 @@ public class Order implements Serializable {
 		this.createdAt = new Date();
 	}
 	
-	public Order(Client client) {
+	/*public Order(Client client) {
 		super();
 		this.status = OrderStatus.OPENED;
 		this.createdAt = new Date();
 		this.client = client;
-	}
+	}*/
 	
-	@OneToMany(mappedBy = "order")
+	@OneToMany(mappedBy = "orderObject")
 	private Set<OrderLine> lines = new HashSet<OrderLine>();
 
 	public Date getClosedAt() {
@@ -89,12 +86,12 @@ public class Order implements Serializable {
 		return createdAt;
 	}
 
-	public Client getClient() {
+	/*public Client getClient() {
 		return client;
 	}
 
 	public void setClient(Client client) {
 		this.client = client;
-	}
+	}*/
 
 }
