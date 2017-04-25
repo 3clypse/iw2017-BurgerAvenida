@@ -14,6 +14,10 @@ public class ProductSimple extends ProductComposite implements Serializable {
 	 */
 	private static final long serialVersionUID = -3744067681104885037L;
 
+	public ProductSimple() {
+		super();
+	}
+	
 	public ProductSimple(String name, Double price) {
 		super(name, price);
 	}

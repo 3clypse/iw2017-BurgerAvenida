@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsUtils;
 
 import com.pd.component.UnauthorizedEntryPoint;
@@ -23,16 +22,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UnauthorizedEntryPoint unauthorizedEntryPoint;
 	
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder bCryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
     }
-
+    
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf().disable()
                 .httpBasic().and()
-                .exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint).and()
+                //.exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
                 .antMatchers("*/**").permitAll()
