@@ -7,6 +7,6 @@ import com.pd.model.security.Role;
 import com.pd.model.security.RoleName;
 
 @Repository
-public interface RoleDAO extends CrudRepository<Role, Long> {
+public interface RoleDao extends CrudRepository<Role, Long> {
 	Role findByName(RoleName name);
 }
