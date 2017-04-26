@@ -7,6 +7,8 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
@@ -19,13 +21,14 @@ public class Client implements Serializable {
 	 */
 	private static final long serialVersionUID = 1696132505136810628L;
 	
-	@Id
+	@Id @GeneratedValue(strategy = GenerationType.AUTO) 
 	private Integer id;
 	@Column(length = 32)
 	private String name;
 	@Column(length = 16)
 	private Integer phoneNumber;
 	@NotNull
+	@Column(length = 64)
 	private String address;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "client")
