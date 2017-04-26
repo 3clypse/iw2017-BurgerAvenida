@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 import com.pd.model.security.User;
@@ -32,9 +33,10 @@ public class Restaurant implements Serializable {
 	@NotNull
 	private String address;
 	
+	@OneToOne
 	private User attendant;
 
-	@OneToMany(fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
 	private Set<Zone> zones = new HashSet<Zone>();
 	
 	public Restaurant() {

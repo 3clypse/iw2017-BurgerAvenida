@@ -26,14 +26,17 @@ public class Zone implements Serializable {
 	
 	@ManyToOne
 	private Restaurant restaurant;
+	
+	private String description;
 
 	public Zone() {
 		super();
 	}
 
-	public Zone(ZoneType type, Restaurant restaurant) {
+	public Zone(ZoneType type, String description, Restaurant restaurant) {
 		super();
 		this.type = type;
+		this.description = description;
 		this.restaurant = restaurant;
 	}
 
@@ -55,6 +58,14 @@ public class Zone implements Serializable {
 
 	public Integer getId() {
 		return id;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 }
