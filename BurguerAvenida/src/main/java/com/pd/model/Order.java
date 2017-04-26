@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 @Entity(name = "orders")
 public class Order implements Serializable {
@@ -35,6 +36,13 @@ public class Order implements Serializable {
 	
 	@Enumerated(EnumType.STRING)
 	private OrderStatus status;
+	
+	@Enumerated(EnumType.STRING)
+	@NotNull
+	private OrderType type;
+	
+	@ManyToOne
+	private Zone zone;
 
 	@ManyToOne
 	private Client client;
@@ -43,13 +51,6 @@ public class Order implements Serializable {
 		super();
 		this.status = OrderStatus.OPENED;
 		this.createdAt = new Date();
-	}
-	
-	public Order(Client client) {
-		super();
-		this.status = OrderStatus.OPENED;
-		this.createdAt = new Date();
-		this.client = client;
 	}
 	
 	@OneToMany(mappedBy = "orderObject")
@@ -95,4 +96,20 @@ public class Order implements Serializable {
 		this.client = client;
 	}
 
+	public OrderType getType() {
+		return type;
+	}
+
+	public void setType(OrderType type) {
+		this.type = type;
+	}
+
+	public Zone getZone() {
+		return zone;
+	}
+
+	public void setZone(Zone zone) {
+		this.zone = zone;
+	}
+	
 }
