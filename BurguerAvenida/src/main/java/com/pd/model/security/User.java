@@ -1,7 +1,9 @@
 package com.pd.model.security;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,7 +21,7 @@ public class User {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Integer id;
 	
 	@Column(length = 20, unique = true)
     @NotNull
@@ -49,19 +51,19 @@ public class User {
     @NotNull
     private Boolean enabled;
     
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(
             name = "user_roles",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
-    private List<Role> roles;
+    private Set<Role> roles = new HashSet<Role>();
 
 	public User() {
 		super();
 	}
 
-	public User(Long id, String username, String password, String firstname, String lastname, String email,
-			Boolean enabled, List<Role> roles) {
+	public User(Integer id, String username, String password, String firstname, String lastname, String email,
+			Boolean enabled, Set<Role> roles) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -73,11 +75,11 @@ public class User {
 		this.roles = roles;
 	}
 
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -121,7 +123,7 @@ public class User {
 		this.email = email;
 	}
 
-	public Boolean getEnabled() {
+	public Boolean isEnabled() {
 		return enabled;
 	}
 
@@ -129,11 +131,11 @@ public class User {
 		this.enabled = enabled;
 	}
 
-	public List<Role> getRoles() {
+	public Set<Role> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(List<Role> roles) {
+	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
     
