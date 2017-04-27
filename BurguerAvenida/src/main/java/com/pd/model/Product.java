@@ -1,5 +1,6 @@
 package com.pd.model;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,6 +17,7 @@ public class Product {
 	@Id @GeneratedValue(strategy = GenerationType.AUTO) 
 	private Integer id;
 	
+	@Column(length = 32, unique = true)
 	private String name;
 	
 	private Double price;

@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("Simple")
-public class ProductSimple extends ProductComposite implements Serializable {
+public class ProductSimple extends Product implements Serializable {
 
 	/**
 	 * 
