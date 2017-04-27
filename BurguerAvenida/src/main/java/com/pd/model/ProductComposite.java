@@ -34,10 +34,6 @@ public class ProductComposite extends Product implements Serializable {
 	public ProductComposite() {
 		super();
 	}
-
-	public ProductComposite(String name, Double price) {
-		super(name, price);
-	}
 	
 	public ProductComposite(String name, Double price, Set<Product> products) {
 		super(name, price);

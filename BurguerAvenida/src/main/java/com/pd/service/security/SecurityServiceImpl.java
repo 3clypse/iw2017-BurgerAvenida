@@ -28,14 +28,21 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public void autologin(String username, String password) {
+    public boolean autologin(String username, String password) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
-
         authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-
         if (usernamePasswordAuthenticationToken.isAuthenticated()) {
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-        }
+            return true;
+        }else
+        	return false;
     }
+
+	@Override
+	public void logout() {
+		if(findLoggedInUsername() == null) {
+			SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false); 
+		}
+	}
 }
