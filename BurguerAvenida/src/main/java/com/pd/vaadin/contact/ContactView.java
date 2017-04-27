@@ -15,6 +15,7 @@ public class ContactView extends VerticalLayout implements View {
 	 */
 	private static final long serialVersionUID = -6053541745106875920L;
 	public static final String VIEW_NAME = "Contact";
+	public static String VIEW_ROUTE = "Contact";
 
     public ContactView() {
     	 setSizeFull();
