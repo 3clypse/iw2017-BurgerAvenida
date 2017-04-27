@@ -39,7 +39,7 @@ public class MainUI extends UI {
 		this.getUI().getNavigator().setErrorView(ErrorView.class);
 		//viewProvider.setAccessDeniedViewClass(AccessDeniedView.class);
 	
-		if (securityService.findLoggedInUsername() == null) {
+		if (securityService.findLoggedInUsername() != null) {
 			showMainScreen();
 		} else {
 			showLoginScreen();
