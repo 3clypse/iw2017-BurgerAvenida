@@ -34,12 +34,12 @@ public class BurguerAvenidaApplicationTests {
 	@Ignore
 	public void testProduct() {
 		
-		securityService.autologin("darkborrego", "pass");
+		//securityService.autologin("darkborrego", "pass");
 		
-		UserPostDto userPostDto = new UserPostDto("gerente3", "pass", "Pablo", "Borrego", "dark@borrego.com");
+		UserPostDto userPostDto = new UserPostDto("borrego", "pass", "Pablo", "Borrego", "dark@borrego.com");
 		try {
 			
-			userService.create(userPostDto, new HashSet<RoleName>(Arrays.asList(RoleName.ROLE_ATTENDANT, RoleName.ROLE_WAITER)));
+			userService.create(userPostDto, new HashSet<RoleName>(Arrays.asList(RoleName.ROLE_MANAGER)));
 		} catch (UserAlreadyExistsException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
