@@ -3,6 +3,9 @@ package com.pd.vaadin;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pd.service.security.SecurityService;
+import com.pd.vaadin.utils.ErrorView;
+import com.pd.vaadin.utils.UnauthorizedView;
+import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Viewport;
 import com.vaadin.server.Responsive;
@@ -15,6 +18,7 @@ import com.vaadin.ui.themes.ValoTheme;
 @Viewport("user-scalable=no,initial-scale=1.0")
 @Theme("mytheme")
 @SpringUI
+@PreserveOnRefresh
 public class MainUI extends UI {
 	
 	/**
@@ -36,10 +40,11 @@ public class MainUI extends UI {
 		Responsive.makeResponsive(this);
         getPage().setTitle("Burguer Avenida App");
         addStyleName(ValoTheme.UI_WITH_MENU);
-		this.getUI().getNavigator().setErrorView(ErrorView.class);
-		//viewProvider.setAccessDeniedViewClass(AccessDeniedView.class);
-	
-		if (securityService.findLoggedInUsername() != null) {
+        
+		getUI().getNavigator().setErrorView(ErrorView.class);
+		viewProvider.setAccessDeniedViewClass(UnauthorizedView.class);
+		
+		if (securityService.isLoggedIn()) {
 			showMainScreen();
 		} else {
 			showLoginScreen();
@@ -56,8 +61,10 @@ public class MainUI extends UI {
 	
 	protected boolean login(String username, String password) {
 		if(securityService.autologin(username, password)){
+			//VaadinService.reinitializeSession(VaadinService.getCurrentRequest());
 			showMainScreen();
 			return true;
 		}else return false;
 	}
+	
 }  

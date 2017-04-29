@@ -4,9 +4,10 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pd.model.security.RoleName;
 import com.pd.service.security.SecurityService;
-import com.pd.vaadin.about.AboutView;
-import com.pd.vaadin.home.HomeView;
+import com.pd.vaadin.view.AboutView;
+import com.pd.vaadin.view.HomeView;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewDisplay;
@@ -61,12 +62,10 @@ public class MainScreen extends HorizontalLayout implements ViewDisplay {
         setStyleName("main-screen");
         CssLayout menu = new CssLayout();
         
-        
         menu.setPrimaryStyleName(ValoTheme.MENU_ROOT);
         menuPart = new CssLayout();
         menuPart.addStyleName(ValoTheme.MENU_PART);
 
-        // header of the menu
         final HorizontalLayout top = new HorizontalLayout();
         top.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
         top.addStyleName(ValoTheme.MENU_TITLE);
@@ -99,33 +98,30 @@ public class MainScreen extends HorizontalLayout implements ViewDisplay {
         showMenu.addStyleName(VALO_MENU_TOGGLE);
         showMenu.setIcon(VaadinIcons.MENU);
         menuPart.addComponent(showMenu);
-        // container for the navigation buttons, which are added by addView()
-        menuItemsLayout = new CssLayout();
         
-        menuItemsLayout.addComponent(
+        menuItemsLayout = new CssLayout();
+                menuItemsLayout.addComponent(
         		createNavigationButton(
         				"Home", 
         				HomeView.VIEW_NAME,
         				VaadinIcons.HOME));
-        
-        menuItemsLayout.addComponent(
-        		createNavigationButton(
-        				"About", 
-        				AboutView.VIEW_NAME,
-        				VaadinIcons.INFO));
-        
+                if(securityService.hasRole(RoleName.ROLE_ATTENDANT))
+        		menuItemsLayout.addComponent(
+                		createNavigationButton(
+                		"About", 
+                		AboutView.VIEW_NAME,
+                		VaadinIcons.INFO));
         menuItemsLayout.setPrimaryStyleName(VALO_MENUITEMS);
+        
         menuPart.addComponent(menuItemsLayout);
-
         menu.addComponent(menuPart);
-
         addComponent(menu);
+        
         springViewDisplay = new Panel();
         springViewDisplay.setSizeFull();
         addComponent(springViewDisplay);
         setExpandRatio(springViewDisplay, 1.0f);
         setSizeFull();
-        
 	}
 
 	private Button createNavigationButton(String caption, final String viewName, VaadinIcons icon) {
@@ -140,7 +136,6 @@ public class MainScreen extends HorizontalLayout implements ViewDisplay {
 	public void showView(View view) {
 		springViewDisplay.setContent((Component) view);
 	}
-
 	
 	private void logout() {
 		securityService.logout();

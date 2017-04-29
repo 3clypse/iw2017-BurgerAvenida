@@ -3,6 +3,7 @@ package com.pd.vaadin;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Page;
 import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -18,6 +19,7 @@ import com.vaadin.ui.themes.ValoTheme;
 /**
  * UI content when the user is not logged in yet.
  */
+@UIScope
 public class LoginScreen extends CssLayout {
 
 	/**
@@ -42,12 +44,8 @@ public class LoginScreen extends CssLayout {
 	public LoginScreen(LoginCallback callback) {
 		addStyleName("login-screen");
 
-		// login form, centered in the available part of the screen
 		Component loginForm = buildLoginForm(callback);
 
-		// layout to center login form when there is sufficient screen space
-		// - see the theme for how this is made responsive for various screen
-		// sizes
 		VerticalLayout centeringLayout = new VerticalLayout();
 		centeringLayout.setMargin(false);
 		centeringLayout.setSpacing(false);
@@ -55,7 +53,6 @@ public class LoginScreen extends CssLayout {
 		centeringLayout.addComponent(loginForm);
 		centeringLayout.setComponentAlignment(loginForm, Alignment.MIDDLE_CENTER);
 
-		// information text about logging in
 		CssLayout loginInformation = buildLoginInformation();
 
 		addComponent(centeringLayout);
