@@ -1,5 +1,6 @@
 package com.pd.model.security;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -16,7 +17,12 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "role")
-public class Role {
+public class Role implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 165143835352267665L;
 
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)

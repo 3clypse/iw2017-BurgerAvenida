@@ -9,7 +9,7 @@ import com.pd.exception.UserAlreadyExistsException;
 import com.pd.model.security.RoleName;
 import com.pd.model.security.User;
 
-//@PreAuthorize("hasRole('ROLE_MANAGER')")
+//@PreAuthorize("hasRole('ROLE_ATTENDANT')")
 public interface UserService {
 
 	public User create(UserPostDto userPostDto, Set<RoleName> roles) throws UserAlreadyExistsException;

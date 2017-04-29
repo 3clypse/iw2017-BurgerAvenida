@@ -1,5 +1,6 @@
 package com.pd.model.security;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,8 +18,13 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
-public class User {
+public class User implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4570970229599254928L;
+
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
@@ -123,10 +129,6 @@ public class User {
 		this.email = email;
 	}
 
-	public Boolean isEnabled() {
-		return enabled;
-	}
-
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
 	}
@@ -137,6 +139,10 @@ public class User {
 
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
+	}
+
+	public Boolean isEnabled() {
+		return enabled;
 	}
     
 }
