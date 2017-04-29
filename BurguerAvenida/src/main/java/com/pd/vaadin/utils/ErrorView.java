@@ -1,17 +1,18 @@
-package com.pd.vaadin;
+package com.pd.vaadin.utils;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.spring.annotation.SpringView;
-import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-@UIScope
-@SpringView(name = ErrorView.VIEW_NAME)
+@Component
+@Scope("prototype")
 public class ErrorView extends VerticalLayout implements View {
 
     /**

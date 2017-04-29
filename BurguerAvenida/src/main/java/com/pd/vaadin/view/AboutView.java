@@ -1,4 +1,4 @@
-package com.pd.vaadin.about;
+package com.pd.vaadin.view;
 
 import java.util.List;
 
