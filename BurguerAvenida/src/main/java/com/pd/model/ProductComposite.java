@@ -28,15 +28,12 @@ public class ProductComposite extends Product implements Serializable {
 	)
 	private Set<Product> products = new HashSet<Product>();
 	
-	/*@OneToMany(cascade=CascadeType.ALL)
-	private Set<ProductFamily> families = new HashSet<ProductFamily>();*/
-	
 	public ProductComposite() {
 		super();
 	}
 	
-	public ProductComposite(String name, Double price, Set<Product> products) {
-		super(name, price);
+	public ProductComposite(String name, Double price, IVA iva, Set<Product> products) {
+		super(name, price, iva);
 		this.products = products;
 	}
 
@@ -47,13 +44,4 @@ public class ProductComposite extends Product implements Serializable {
 	public void setProducts(Set<Product> products) {
 		this.products = products;
 	}
-
-	/*public Set<ProductFamily> getFamilies() {
-		return families;
-	}
-
-	public void setFamilies(Set<ProductFamily> families) {
-		this.families = families;
-	}*/
-	
 }

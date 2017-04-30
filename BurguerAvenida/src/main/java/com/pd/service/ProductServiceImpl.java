@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.pd.dao.ProductDao;
 import com.pd.exception.ProductAlreadyExistsException;
 import com.pd.exception.ProductNotExistsException;
+import com.pd.model.IVA;
 import com.pd.model.Product;
 import com.pd.model.ProductComposite;
 import com.pd.model.ProductSimple;
@@ -21,23 +22,23 @@ public class ProductServiceImpl implements ProductService {
 	private ProductDao productDao;
 	
 	@Override
-	public Product create(String name, Double price, Set<Product> products) throws ProductAlreadyExistsException {
+	public Product create(String name, Double price, IVA iva, Set<Product> products) throws ProductAlreadyExistsException {
 		Product product = productDao.findByName(name);
 		if(product != null)
 			throw new ProductAlreadyExistsException();
 		else {
-			product = new ProductComposite(name, price, products);
+			product = new ProductComposite(name, price, iva, products);
 			return productDao.save(product);
 		}
 	}
 
 	@Override
-	public Product create(String name, Double price) throws ProductAlreadyExistsException {
+	public Product create(String name, Double price, IVA iva) throws ProductAlreadyExistsException {
 		Product product = productDao.findByName(name);
 		if(product != null)
 			throw new ProductAlreadyExistsException();
 		else {
-			product = new ProductSimple(name, price);
+			product = new ProductSimple(name, price, iva);
 			return productDao.save(product);
 		}
 	}

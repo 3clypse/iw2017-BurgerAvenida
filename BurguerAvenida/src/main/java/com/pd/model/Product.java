@@ -22,14 +22,17 @@ public class Product {
 	
 	private Double price;
 	
+	private IVA iva;
+	
 	public Product() {
 		super();
 	}
 	
-	public Product(String name, Double price) {
+	public Product(String name, Double price, IVA iva) {
 		super();
 		this.name = name;
 		this.price = price;
+		this.iva = iva;
 	}
 
 	public Double getPrice() {
@@ -54,6 +57,14 @@ public class Product {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public IVA getIva() {
+		return iva;
+	}
+
+	public void setIva(IVA iva) {
+		this.iva = iva;
 	}
 	
 }

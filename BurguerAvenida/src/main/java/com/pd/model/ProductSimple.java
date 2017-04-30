@@ -18,24 +18,8 @@ public class ProductSimple extends Product implements Serializable {
 		super();
 	}
 	
-	public ProductSimple(String name, Double price) {
-		super(name, price);
+	public ProductSimple(String name, Double price, IVA iva) {
+		super(name, price, iva);
 	}
-	
-	/*public ProductoSimple(String name, Double price, FamiliaProducto familiaProducto) {
-		super(name, price);
-		this.familiaProducto = familiaProducto;
-	}
-	
-	@OneToOne(cascade=CascadeType.ALL)
-	private FamiliaProducto familiaProducto;
-
-	public FamiliaProducto getFamiliaProducto() {
-		return familiaProducto;
-	}
-
-	public void setFamiliaProducto(FamiliaProducto familiaProducto) {
-		this.familiaProducto = familiaProducto;
-	}*/
 	
 }

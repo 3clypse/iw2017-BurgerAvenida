@@ -5,14 +5,14 @@ import java.util.Set;
 
 import com.pd.exception.ProductAlreadyExistsException;
 import com.pd.exception.ProductNotExistsException;
+import com.pd.model.IVA;
 import com.pd.model.Product;
 
-//@PreAuthorize("hasRole('ROLE_ATTENDANT')")
 public interface ProductService {
 
-	public Product create(String name, Double price, Set<Product> products) throws ProductAlreadyExistsException;
+	public Product create(String name, Double price, IVA iva, Set<Product> products) throws ProductAlreadyExistsException;
 	
-	public Product create(String name, Double price) throws ProductAlreadyExistsException;
+	public Product create(String name, Double price, IVA iva) throws ProductAlreadyExistsException;
 	
 	public Product read(Integer id) throws ProductNotExistsException;
 	
