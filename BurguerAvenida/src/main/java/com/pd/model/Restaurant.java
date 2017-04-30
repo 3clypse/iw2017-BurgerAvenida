@@ -49,6 +49,12 @@ public class Restaurant implements Serializable {
 		this.address = address;
 		this.attendant = attendant;
 	}
+	
+	public Restaurant(String name, String address) {
+		super();
+		this.name = name;
+		this.address = address;
+	}
 
 	public String getName() {
 		return name;
