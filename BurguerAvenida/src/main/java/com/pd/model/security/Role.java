@@ -26,7 +26,7 @@ public class Role implements Serializable {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Integer id;
 	
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -38,25 +38,14 @@ public class Role implements Serializable {
 	public Role() {
 		super();
 	}
-
-	public Role(Long id, RoleName name, List<User> users) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.users = users;
-	}
 	
 	public Role(RoleName name) {
 		super();
 		this.name = name;
 	}
 
-	public Long getId() {
+	public Integer getId() {
 		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public RoleName getName() {
@@ -69,10 +58,6 @@ public class Role implements Serializable {
 
 	public List<User> getUsers() {
 		return users;
-	}
-
-	public void setUsers(List<User> users) {
-		this.users = users;
 	}
     
 }
