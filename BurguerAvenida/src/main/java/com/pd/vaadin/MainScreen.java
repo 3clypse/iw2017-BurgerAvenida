@@ -4,9 +4,9 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pd.model.security.RoleName;
 import com.pd.service.security.SecurityService;
 import com.pd.vaadin.view.AboutView;
+import com.pd.vaadin.view.CreateUserView;
 import com.pd.vaadin.view.HomeView;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
@@ -105,12 +105,26 @@ public class MainScreen extends HorizontalLayout implements ViewDisplay {
         				"Home", 
         				HomeView.VIEW_NAME,
         				VaadinIcons.HOME));
-                if(securityService.hasRole(RoleName.ROLE_ATTENDANT))
+                //if(securityService.hasRole(RoleName.ROLE_ATTENDANT))
         		menuItemsLayout.addComponent(
                 		createNavigationButton(
                 		"About", 
                 		AboutView.VIEW_NAME,
                 		VaadinIcons.INFO));
+        		//if(securityService.hasRole(RoleName.ROLE_MANAGER));
+        		
+        		Button button = new Button("ADMIN ZONE");
+        		button.setPrimaryStyleName(ValoTheme.MENU_ITEM);
+                //button.setIcon(VaadinIcons.MENU);
+                button.setEnabled(false);
+                menuItemsLayout.addComponent(button);
+                
+        		
+        		menuItemsLayout.addComponent(
+                		createNavigationButton(
+                		"Create User", 
+                		CreateUserView.VIEW_NAME,
+                		VaadinIcons.USER));
         menuItemsLayout.setPrimaryStyleName(VALO_MENUITEMS);
         
         menuPart.addComponent(menuItemsLayout);
