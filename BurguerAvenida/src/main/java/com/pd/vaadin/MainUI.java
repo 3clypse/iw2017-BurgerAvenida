@@ -1,5 +1,7 @@
 package com.pd.vaadin;
 
+import javax.servlet.annotation.WebServlet;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pd.service.security.SecurityService;
@@ -7,9 +9,11 @@ import com.pd.vaadin.utils.ErrorView;
 import com.pd.vaadin.utils.UnauthorizedView;
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
+import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Viewport;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinServlet;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.navigator.SpringViewProvider;
 import com.vaadin.ui.UI;
@@ -65,6 +69,12 @@ public class MainUI extends UI {
 			showMainScreen();
 			return true;
 		}else return false;
+	}
+	
+	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
+	@VaadinServletConfiguration(ui = MainUI.class, productionMode = true)
+	public static class MyUIServlet extends VaadinServlet {
+		private static final long serialVersionUID = 452468769467758600L;
 	}
 	
 }  

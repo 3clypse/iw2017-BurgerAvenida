@@ -4,10 +4,14 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pd.model.security.RoleName;
 import com.pd.service.security.SecurityService;
 import com.pd.vaadin.view.AboutView;
-import com.pd.vaadin.view.CreateUserView;
 import com.pd.vaadin.view.HomeView;
+import com.pd.vaadin.view.productfamily.ProductFamilyView;
+import com.pd.vaadin.view.restaurant.RestaurantView;
+import com.pd.vaadin.view.user.UserView;
+import com.pd.vaadin.view.zone.ZoneView;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewDisplay;
@@ -54,88 +58,112 @@ public class MainScreen extends HorizontalLayout implements ViewDisplay {
     public void attach() {
         super.attach();
         this.getUI().getNavigator().navigateTo(HomeView.VIEW_NAME);
+        buildMenu();
     }
 	
-	@PostConstruct
-	void init() {
-		setSpacing(false);
-        setStyleName("main-screen");
-        CssLayout menu = new CssLayout();
-        
-        menu.setPrimaryStyleName(ValoTheme.MENU_ROOT);
-        menuPart = new CssLayout();
-        menuPart.addStyleName(ValoTheme.MENU_PART);
-
-        final HorizontalLayout top = new HorizontalLayout();
-        top.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
-        top.addStyleName(ValoTheme.MENU_TITLE);
-        Label title = new Label("MENU");
-        title.addStyleName(ValoTheme.LABEL_H3);
-        title.setSizeUndefined();
-        Image image = new Image(null, new ThemeResource("img/table-logo.png"));
-        image.setStyleName("logo");
-        top.addComponent(image);
-        top.addComponent(title);
-        menuPart.addComponent(top);
-
-        MenuBar logoutMenu = new MenuBar();
-        logoutMenu.addItem("Logout", VaadinIcons.SIGN_OUT, selectedItem -> {
-        	logout();
+	private void buildMenu() {
+		CssLayout menu = new CssLayout();
+		
+		menu.setPrimaryStyleName(ValoTheme.MENU_ROOT);
+		menuPart = new CssLayout();
+		menuPart.addStyleName(ValoTheme.MENU_PART);
+		
+		final HorizontalLayout top = new HorizontalLayout();
+		top.setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
+		top.addStyleName(ValoTheme.MENU_TITLE);
+		Label title = new Label("MENU");
+		title.addStyleName(ValoTheme.LABEL_H3);
+		title.setSizeUndefined();
+		Image image = new Image(null, new ThemeResource("img/table-logo.png"));
+		image.setStyleName("logo");
+		top.addComponent(image);
+		top.addComponent(title);
+		menuPart.addComponent(top);
+		
+		MenuBar logoutMenu = new MenuBar();
+		logoutMenu.addItem("Logout", VaadinIcons.SIGN_OUT, selectedItem -> {
+			logout();
 		});
-
-        logoutMenu.addStyleName("user-menu");
-        menuPart.addComponent(logoutMenu);
-
-        final Button showMenu = new Button("Menu", (ClickListener) event -> {
-		    if (menuPart.getStyleName().contains(VALO_MENU_VISIBLE)) {
-		        menuPart.removeStyleName(VALO_MENU_VISIBLE);
-		    } else {
-		        menuPart.addStyleName(VALO_MENU_VISIBLE);
-		    }
+		
+		logoutMenu.addStyleName("user-menu");
+		menuPart.addComponent(logoutMenu);
+		
+		final Button showMenu = new Button("Menu", (ClickListener) event -> {
+			if (menuPart.getStyleName().contains(VALO_MENU_VISIBLE)) {
+				menuPart.removeStyleName(VALO_MENU_VISIBLE);
+			} else {
+				menuPart.addStyleName(VALO_MENU_VISIBLE);
+			}
 		});
-        showMenu.addStyleName(ValoTheme.BUTTON_PRIMARY);
-        showMenu.addStyleName(ValoTheme.BUTTON_SMALL);
-        showMenu.addStyleName(VALO_MENU_TOGGLE);
-        showMenu.setIcon(VaadinIcons.MENU);
-        menuPart.addComponent(showMenu);
-        
-        menuItemsLayout = new CssLayout();
-                menuItemsLayout.addComponent(
-        		createNavigationButton(
-        				"Home", 
-        				HomeView.VIEW_NAME,
-        				VaadinIcons.HOME));
-                //if(securityService.hasRole(RoleName.ROLE_ATTENDANT))
-        		menuItemsLayout.addComponent(
-                		createNavigationButton(
-                		"About", 
-                		AboutView.VIEW_NAME,
-                		VaadinIcons.INFO));
-        		//if(securityService.hasRole(RoleName.ROLE_MANAGER));
-        		
-        		Button button = new Button("ADMIN ZONE");
-        		button.setPrimaryStyleName(ValoTheme.MENU_ITEM);
-                //button.setIcon(VaadinIcons.MENU);
-                button.setEnabled(false);
-                menuItemsLayout.addComponent(button);
-                
-        		
-        		menuItemsLayout.addComponent(
-                		createNavigationButton(
-                		"Create User", 
-                		CreateUserView.VIEW_NAME,
-                		VaadinIcons.USER));
-        menuItemsLayout.setPrimaryStyleName(VALO_MENUITEMS);
-        
-        menuPart.addComponent(menuItemsLayout);
-        menu.addComponent(menuPart);
-        addComponent(menu);
-        
-        springViewDisplay = new Panel();
+		showMenu.addStyleName(ValoTheme.BUTTON_PRIMARY);
+		showMenu.addStyleName(ValoTheme.BUTTON_SMALL);
+		showMenu.addStyleName(VALO_MENU_TOGGLE);
+		showMenu.setIcon(VaadinIcons.MENU);
+		menuPart.addComponent(showMenu);
+		
+		menuItemsLayout = new CssLayout();
+		menuItemsLayout.addComponent(
+				createNavigationButton(
+						"Home", 
+						HomeView.VIEW_NAME,
+						VaadinIcons.HOME));
+		//if(securityService.hasRole(RoleName.ROLE_ATTENDANT))
+		menuItemsLayout.addComponent(
+				createNavigationButton(
+						"About", 
+						AboutView.VIEW_NAME,
+						VaadinIcons.INFO));
+		
+		//ADMIN ZONE
+		if(securityService.hasRole(RoleName.ROLE_MANAGER)) {
+			Button button = new Button("ADMIN ZONE");
+			button.setPrimaryStyleName(ValoTheme.MENU_ITEM);
+			button.setEnabled(false);
+			menuItemsLayout.addComponent(button);
+			
+			
+			menuItemsLayout.addComponent(
+					createNavigationButton(
+							"User", 
+							UserView.VIEW_NAME,
+							VaadinIcons.USER));
+			
+			menuItemsLayout.addComponent(
+					createNavigationButton(
+							"Product Family", 
+							ProductFamilyView.VIEW_NAME,
+							VaadinIcons.FAMILY));
+			
+			menuItemsLayout.addComponent(
+					createNavigationButton(
+							"Zone", 
+							ZoneView.VIEW_NAME,
+							VaadinIcons.LOCATION_ARROW_CIRCLE_O));
+			
+			menuItemsLayout.addComponent(
+					createNavigationButton(
+							"Restaurant", 
+							RestaurantView.VIEW_NAME,
+							VaadinIcons.SHOP));
+		}
+		
+		menuItemsLayout.setPrimaryStyleName(VALO_MENUITEMS);
+		
+		menuPart.addComponent(menuItemsLayout);
+		menu.addComponent(menuPart);
+		addComponent(menu);
         springViewDisplay.setSizeFull();
         addComponent(springViewDisplay);
         setExpandRatio(springViewDisplay, 1.0f);
         setSizeFull();
+		
+	}
+	
+	@PostConstruct
+	void init() {
+		springViewDisplay = new Panel();
+		setSpacing(false);
+        setStyleName("main-screen");
 	}
 
 	private Button createNavigationButton(String caption, final String viewName, VaadinIcons icon) {
@@ -153,8 +181,8 @@ public class MainScreen extends HorizontalLayout implements ViewDisplay {
 	
 	private void logout() {
 		securityService.logout();
-		getUI().getPage().reload();
 		getSession().close();
+		getUI().getPage().reload();
 	}
 
 }
