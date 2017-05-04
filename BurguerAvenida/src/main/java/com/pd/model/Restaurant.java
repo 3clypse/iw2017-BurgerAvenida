@@ -12,7 +12,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.NotNull;
 
 import com.pd.model.security.User;
 
@@ -23,22 +22,21 @@ public class Restaurant implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -1302224010276448331L;
-	
-	@Id @GeneratedValue(strategy = GenerationType.AUTO) 
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 	@Column(length = 32, unique = true)
-	@NotNull
 	private String name;
 	@Column(length = 64)
-	@NotNull
 	private String address;
-	
+
 	@OneToOne
 	private User attendant;
-
+	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
 	private Set<Zone> zones = new HashSet<Zone>();
-	
+
 	public Restaurant() {
 		super();
 	}
@@ -49,7 +47,7 @@ public class Restaurant implements Serializable {
 		this.address = address;
 		this.attendant = attendant;
 	}
-	
+
 	public Restaurant(String name, String address) {
 		super();
 		this.name = name;
@@ -90,6 +88,11 @@ public class Restaurant implements Serializable {
 
 	public void setZones(Set<Zone> zones) {
 		this.zones = zones;
+	}
+
+	@Override
+	public String toString() {
+		return name + ", " + address;
 	}
 	
 }

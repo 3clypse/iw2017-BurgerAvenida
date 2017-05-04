@@ -11,7 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.NotNull;
 
 @Entity
 public class Client implements Serializable {
@@ -27,7 +26,6 @@ public class Client implements Serializable {
 	private String name;
 	@Column(length = 16)
 	private Integer phoneNumber;
-	@NotNull
 	@Column(length = 64)
 	private String address;
 	

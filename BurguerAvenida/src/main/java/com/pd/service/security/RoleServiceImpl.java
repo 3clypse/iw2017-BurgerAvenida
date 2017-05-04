@@ -33,7 +33,10 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public Set<Role> findAll() {
-		return (Set<Role>) roleDao.findAll();
+		List<Role> roles = (List<Role>) roleDao.findAll();
+		Set<Role> roleSet = new HashSet<Role>();
+		roles.forEach(role->roleSet.add(role));
+		return roleSet;
 	}
 
 }

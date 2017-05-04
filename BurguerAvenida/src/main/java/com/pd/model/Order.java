@@ -15,7 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 
 @Entity(name = "orders")
 public class Order implements Serializable {
@@ -38,7 +37,6 @@ public class Order implements Serializable {
 	private OrderStatus status;
 	
 	@Enumerated(EnumType.STRING)
-	@NotNull
 	private OrderType type;
 	
 	@ManyToOne
