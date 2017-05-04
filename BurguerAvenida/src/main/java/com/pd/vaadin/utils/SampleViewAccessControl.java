@@ -16,14 +16,17 @@ public class SampleViewAccessControl implements ViewAccessControl {
 
 	@Override
 	public boolean isAccessGranted(UI ui, String beanName) {
-		System.out.println("COMPROBANDO " + beanName + " PARA USUARIO CON ROLES: " +securityService.roles());
-		/*if(securityService.hasRole(RoleName.ROLE_MANAGER)){
+		//System.out.println("COMPROBANDO " + beanName + " PARA USUARIO CON ROLES: " +securityService.roles());
+		if(securityService.hasRole(RoleName.ROLE_MANAGER)){
 			return true;
-		} else */if (beanName.equals("homeView")) {
+		} else if (beanName.equals("homeView")) {
 			return true;
 		} else if (beanName.equals("aboutView")){
 			return securityService.hasRole(RoleName.ROLE_WAITER) || securityService.hasRole(RoleName.ROLE_ATTENDANT);
-		} else return true;
+		} else if (beanName.equals("userView")){
+			return securityService.hasRole(RoleName.ROLE_MANAGER);
+		} 
+		else return true;
 	}
 	
 }

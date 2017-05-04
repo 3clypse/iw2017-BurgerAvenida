@@ -52,7 +52,7 @@ public class SecurityServiceImpl implements SecurityService {
 	@Override
 	public void logout() {
 		if(isLoggedIn()) {
-			SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false); 
+			SecurityContextHolder.getContext().setAuthentication(null);
 		}
 	}
 	
