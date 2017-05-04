@@ -1,17 +1,21 @@
 package com.pd;
 
-import java.util.Arrays;
 import java.util.HashSet;
 
+import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.pd.dto.UserPostDto;
+import com.pd.dao.security.RoleDao;
+import com.pd.dao.security.UserDao;
 import com.pd.model.Restaurant;
 import com.pd.model.ZoneType;
+import com.pd.model.security.Role;
 import com.pd.model.security.RoleName;
+import com.pd.model.security.User;
 import com.pd.service.RestaurantService;
 import com.pd.service.ZoneService;
 import com.pd.service.security.RoleService;
@@ -36,27 +40,38 @@ public class BurguerAvenidaApplication implements CommandLineRunner {
 	@Autowired
 	ZoneService zoneService;
 	
+	@Autowired
+	UserDao userDao;
+	
+	@Autowired
+	RoleDao roleDao;
+	
 	@Override
+	@Transactional
 	public void run(String... args) throws Exception {
 		//Data first load
 		
 		//Roles
 		roleService.create(RoleName.ROLE_WAITER);
+		Role waiter = roleDao.findByName(RoleName.ROLE_WAITER);
 		roleService.create(RoleName.ROLE_ATTENDANT);
+		Role attendant = roleDao.findByName(RoleName.ROLE_ATTENDANT);
 		roleService.create(RoleName.ROLE_MANAGER);
+		Role manager = roleDao.findByName(RoleName.ROLE_MANAGER);
 		
 		//Manager
-		userService.create(
-				new UserPostDto("admin", "admin", "Admin", "Admin", "admin@admin.com"), 
-				new HashSet<RoleName>(Arrays.asList(RoleName.ROLE_MANAGER)));
+		userService.save(
+				new User("admin", "admin", "Admin", "Admin", "admin@admin.com", new HashSet<>(Lists.newArrayList(manager))));
 		
 		//Attendants
-		userService.create(
-				new UserPostDto("lionel", "lionel", "Leo Andres", "Messi", "leo@messi.com"),
-				new HashSet<RoleName>(Arrays.asList(RoleName.ROLE_ATTENDANT, RoleName.ROLE_WAITER)));
-		userService.create(
-				new UserPostDto("cristiano", "cristiano", "Cristiano", "Ronaldo", "cristiano@ronaldo.com"),
-				new HashSet<RoleName>(Arrays.asList(RoleName.ROLE_ATTENDANT, RoleName.ROLE_WAITER)));
+		userService.save(
+				new User("lionel", "lionel", "Leo Andres", "Messi", "leo@messi.com", new HashSet<>(Lists.newArrayList(attendant, waiter))));
+		userService.save(
+				new User("cristiano", "cristiano", "Cristiano", "Ronaldo", "cristiano@ronaldo.com", new HashSet<>(Lists.newArrayList(attendant, waiter))));
+		
+		User cristiano = userService.read("cristiano");
+		cristiano.setRoles(roleService.findAll());
+		userDao.save(cristiano);
 		
 		//Restaurants
 		restaurantService.create("Avenida Burguer nº1", "Avenida Andalucia s/n", userService.read("lionel"));
