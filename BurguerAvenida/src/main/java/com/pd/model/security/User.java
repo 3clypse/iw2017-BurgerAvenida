@@ -14,73 +14,56 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Entity
 public class User implements Serializable {
-	
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 4570970229599254928L;
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-	
-	@Column(length = 20, unique = true)
-    @NotNull
-    @Size(min = 4, max = 20)
-    private String username;
-	
-	@Column(length = 100)
-    @NotNull
-    @Size(min = 4, max = 100)
-    private String password;
-	
-	@Column(length = 20)
-    @NotNull
-    @Size(min = 4, max = 20)
-    private String firstname;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Integer id;
 
-    @Column(length = 50)
-    @NotNull
-    @Size(min = 4, max = 50)
-    private String lastname;
+	@Column(length = 16, unique = true)
+	private String username;
 
-    @Column(length = 50)
-    @NotNull
-    @Size(min = 4, max = 50)
-    private String email;
+	@Column(length = 128)
+	private String password;
 
-    @NotNull
-    private Boolean enabled;
-    
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+	@Column(length = 16)
+	private String firstname;
+
+	@Column(length = 32)
+	private String lastname;
+
+	@Column(length = 32)
+	private String email;
+
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(
             name = "user_roles",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
-    private Set<Role> roles = new HashSet<Role>();
-
+	private Set<Role> roles = new HashSet<Role>();
+	
 	public User() {
 		super();
 	}
 
-	public User(Integer id, String username, String password, String firstname, String lastname, String email,
-			Boolean enabled, Set<Role> roles) {
+	public User(String username, String password, String firstname, String lastname, String email,
+			Set<Role> roles) {
 		super();
-		this.id = id;
 		this.username = username;
 		this.password = password;
 		this.firstname = firstname;
 		this.lastname = lastname;
 		this.email = email;
-		this.enabled = enabled;
 		this.roles = roles;
 	}
-
+	
 	public Integer getId() {
 		return id;
 	}
@@ -129,9 +112,6 @@ public class User implements Serializable {
 		this.email = email;
 	}
 
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
-	}
 
 	public Set<Role> getRoles() {
 		return roles;
@@ -141,8 +121,34 @@ public class User implements Serializable {
 		this.roles = roles;
 	}
 
-	public Boolean isEnabled() {
-		return enabled;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
 	}
-    
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return firstname + ", " + lastname;
+	}
+	
 }
