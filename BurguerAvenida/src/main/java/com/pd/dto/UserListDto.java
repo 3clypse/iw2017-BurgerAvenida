@@ -1,8 +1,16 @@
 package com.pd.dto;
 
-public class UserListDto {
+import java.io.Serializable;
 
+public class UserListDto implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3313360027055957860L;
+	
 	private String username;
+	private String password;
 	private String firstname;
 	private String lastname;
 	private String Email;
@@ -11,7 +19,7 @@ public class UserListDto {
 		super();
 	}
 
-	public UserListDto(String username, String firstname, String lastname, String email) {
+	public UserListDto(String username, String password, String firstname, String lastname, String email) {
 		super();
 		this.username = username;
 		this.firstname = firstname;
@@ -42,6 +50,14 @@ public class UserListDto {
 	}
 	public void setEmail(String email) {
 		Email = email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 	
 }
