@@ -1,189 +1,103 @@
-package com.pd.vaadin.view;
+package com.pd.vaadin.view.user;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collection;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
-import com.pd.dto.UserPostDto;
-import com.pd.exception.UserAlreadyExistsException;
-import com.pd.model.security.RoleName;
+import com.pd.dao.security.UserDao;
 import com.pd.model.security.User;
-import com.pd.service.security.RoleService;
-import com.pd.service.security.UserService;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.ListSelect;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 @UIScope
-@SpringView(name = CreateUserView.VIEW_ROUTE)
-public class CreateUserView extends VerticalLayout implements View {
+@SpringView(name = UserView.VIEW_ROUTE)
+public class UserView extends VerticalLayout implements View {
 
-    /**
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -6053541745106875920L;
-	
-	public static final String VIEW_ROUTE = "CreateUser";
-	public static final String VIEW_NAME = "CreateUser";
-	public static final String INVALID_FORM = "Invalid form";
-	
+
+	public static final String VIEW_ROUTE = "UserView";
+	public static final String VIEW_NAME = "UserView";
+
+	private final UserDao repo;
+
+	private final UserEditor editor;
+
+	final Grid<User> grid;
+
+	final TextField filter;
+
+	private final Button addNewBtn;
+
 	@Autowired
-	UserService userService;
-	
-	@Autowired
-	RoleService roleService;
-
-	private Set<RoleName> rolesSelected = new HashSet<RoleName>();
-	private TextField usernameTf;
-	private PasswordField passwordTf;
-	private PasswordField passwordRepeatTf;
-	private TextField firstnameTf;
-	private TextField lastnameTf;
-	private TextField emailTf;
-	private User userCreated;
-	private UserPostDto userPostDto;
-	
-	@PostConstruct
-    void init() {
-    	 
-    	 HorizontalLayout title = new HorizontalLayout();
-    	 
-         Label header = new Label("User Creation Form");
-         header.addStyleName(ValoTheme.LABEL_H2);
-         title.addComponent(header);
-         addComponent(title);
-         
-         HorizontalLayout content = new HorizontalLayout();
-         FormLayout form = new FormLayout();
-         
-         usernameTf = new TextField("Username");
-         usernameTf.setIcon(VaadinIcons.USER);
-         usernameTf.setRequiredIndicatorVisible(true);
-         form.addComponent(usernameTf);
-
-         passwordTf = new PasswordField("Password");
-         passwordTf.setIcon(VaadinIcons.PASSWORD);
-         passwordTf.setRequiredIndicatorVisible(true);
-         form.addComponent(passwordTf);
-         
-         passwordRepeatTf = new PasswordField("Repeat Password");
-         passwordRepeatTf.setIcon(VaadinIcons.PASSWORD);
-         passwordRepeatTf.setRequiredIndicatorVisible(true);
-         form.addComponent(passwordRepeatTf);
-
-         firstnameTf = new TextField("Firstname");
-         firstnameTf.setIcon(VaadinIcons.INFO);
-         firstnameTf.setRequiredIndicatorVisible(true);
-         form.addComponent(firstnameTf);
-         
-         lastnameTf = new TextField("Lastname");
-         lastnameTf.setIcon(VaadinIcons.INFO);
-         lastnameTf.setRequiredIndicatorVisible(true);
-         form.addComponent(lastnameTf);
-         
-         emailTf = new TextField("Email");
-         emailTf.setIcon(VaadinIcons.MAILBOX);
-         emailTf.setRequiredIndicatorVisible(true);
-         form.addComponent(emailTf);
-         
-         ListSelect<RoleName> roleListSelect = new ListSelect<RoleName>("User roles");
-         roleListSelect.setRows(3);
-         roleListSelect.setItems(roleService.getRoleNames());
-         roleListSelect.setIcon(VaadinIcons.BAN);
-         roleListSelect.setRequiredIndicatorVisible(true);
-         roleListSelect.addValueChangeListener(event -> {
-        	 rolesSelected = event.getValue();
-         });
-         form.addComponent(roleListSelect);
-         
-         final Button createBtn = new Button("Submit", (ClickListener) event -> {
-        	 try {
-        		this.setEnabled(false);
-        		if(isValidForm()) {
-        			userPostDto = new UserPostDto(usernameTf.getValue(), passwordTf.getValue(), firstnameTf.getValue(), lastnameTf.getValue(), emailTf.getValue());
-        			userCreated = userService.create(userPostDto, rolesSelected);
-        		}
-			} catch (UserAlreadyExistsException e) {
-				Notification.show("INVALID_FORM","Username already exists", Notification.Type.HUMANIZED_MESSAGE);
-				e.printStackTrace();
-			} finally {
-				if(userCreated != null) {
-					usernameTf.clear();
-					passwordTf.clear();
-					passwordRepeatTf.clear();
-					firstnameTf.clear();
-					lastnameTf.clear();
-					emailTf.clear();
-					roleListSelect.clear();
-				}
- 				this.setEnabled(true);
- 			}
-         });
-         
-         form.addComponent(createBtn);
-         
-         content.addComponent(form);
-         addComponent(content);
-    }
-
-	private Boolean isValidForm() {
-		if(usernameTf.isEmpty()) {
-			Notification.show("INVALID_FORM","Username cant be empty", Notification.Type.HUMANIZED_MESSAGE);
-			return false;
-		}
-		if(userService.read(usernameTf.getValue()) != null) {
-			Notification.show("INVALID_FORM","Username already exists", Notification.Type.HUMANIZED_MESSAGE);
-			return false;
-		}
-		if(passwordTf.isEmpty()) {
-			Notification.show("INVALID_FORM","Password cant be empty", Notification.Type.HUMANIZED_MESSAGE);
-			return false;
-		}
-		if(passwordRepeatTf.isEmpty()) {
-			Notification.show("INVALID_FORM","Password repeated cant be empty", Notification.Type.HUMANIZED_MESSAGE);
-			return false;
-		}
-		if(!passwordTf.getValue().equals(passwordRepeatTf.getValue())) {
-			Notification.show("INVALID_FORM","Passwords must be equals", Notification.Type.HUMANIZED_MESSAGE);
-			return false;
-		}
-		if(firstnameTf.isEmpty()) {
-			Notification.show("INVALID_FORM","Firstname cant be empty", Notification.Type.HUMANIZED_MESSAGE);
-			return false;
-		}
-		if(lastnameTf.isEmpty()) {
-			Notification.show("INVALID_FORM","Lastname cant be empty", Notification.Type.HUMANIZED_MESSAGE);
-			return false;
-		}
-		if(emailTf.isEmpty()) {
-			Notification.show("INVALID_FORM","Email cant be empty", Notification.Type.HUMANIZED_MESSAGE);
-			return false;
-		}
-		if(rolesSelected.isEmpty()) {
-			Notification.show("INVALID_FORM","Select any role", Notification.Type.HUMANIZED_MESSAGE);
-			return false;
-		}
-			
-		return true;
+	public UserView(UserDao repo, UserEditor editor) {
+		this.repo = repo;
+		this.editor = editor;
+		this.grid = new Grid<>(User.class);
+		this.filter = new TextField();
+		this.addNewBtn = new Button("New User", VaadinIcons.PLUS_CIRCLE_O);
 	}
 	
-    @Override
-    public void enter(ViewChangeEvent event) {
+	@PostConstruct
+	void init() {
+		this.setResponsive(true);
+		Label header = new Label("Users");
+		header.addStyleName(ValoTheme.LABEL_H2);
+		header.addStyleName(ValoTheme.LABEL_NO_MARGIN);
+		VerticalLayout verticalTitleLayout = new VerticalLayout(new HorizontalLayout(header));
+		verticalTitleLayout.setMargin(new MarginInfo(false, false, false, true));
+		addComponent(verticalTitleLayout);
+		
+		HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn);
+		VerticalLayout mainLayout = new VerticalLayout(actions, grid, editor);
+		addComponent(mainLayout);
+
+		grid.setSizeFull();
+		grid.setColumns("username", "firstname", "lastname", "email", "roles");
+
+		filter.setPlaceholder("Filter by Username");
+
+		filter.setValueChangeMode(ValueChangeMode.LAZY);
+		filter.addValueChangeListener(e -> list(e.getValue()));
+		grid.asSingleSelect().addValueChangeListener(e -> {
+			editor.edit(e.getValue());
+		});
+		addNewBtn.addClickListener(e -> editor.edit(new User()));
+		editor.setChangeHandler(() -> {
+			editor.setVisible(false);
+			list(filter.getValue());
+		});
+		list(null);
+        
     }
+    
+    void list(String filterText) {
+		if (StringUtils.isEmpty(filterText)) {
+			grid.setItems((Collection<User>) repo.findAll());
+		}
+		else {
+			grid.setItems(repo.findByUsernameStartsWithIgnoreCase(filterText));
+		}
+	}
+
+	@Override
+	public void enter(ViewChangeEvent event) {
+	}
 }
