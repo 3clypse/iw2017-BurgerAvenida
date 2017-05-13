@@ -22,23 +22,23 @@ public class ProductServiceImpl implements ProductService {
 	private ProductDao productDao;
 	
 	@Override
-	public Product create(String name, Double price, IVA iva, Set<Product> products) throws ProductAlreadyExistsException {
+	public Product create(String name, String price, IVA iva, Set<Product> products, Boolean canBeSoldAlone) throws ProductAlreadyExistsException {
 		Product product = productDao.findByName(name);
 		if(product != null)
 			throw new ProductAlreadyExistsException();
 		else {
-			product = new ProductComposite(name, price, iva, products);
+			product = new ProductComposite(name, price, iva, products, canBeSoldAlone);
 			return productDao.save(product);
 		}
 	}
 
 	@Override
-	public Product create(String name, Double price, IVA iva) throws ProductAlreadyExistsException {
+	public Product create(String name, String price, IVA iva, Boolean canBeSoldAlone) throws ProductAlreadyExistsException {
 		Product product = productDao.findByName(name);
 		if(product != null)
 			throw new ProductAlreadyExistsException();
 		else {
-			product = new ProductSimple(name, price, iva);
+			product = new ProductSimple(name, price, iva, canBeSoldAlone);
 			return productDao.save(product);
 		}
 	}

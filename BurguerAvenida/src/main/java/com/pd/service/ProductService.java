@@ -10,9 +10,9 @@ import com.pd.model.Product;
 
 public interface ProductService {
 
-	public Product create(String name, Double price, IVA iva, Set<Product> products) throws ProductAlreadyExistsException;
+	public Product create(String name, String price, IVA iva, Set<Product> products, Boolean canBeSoldAlone) throws ProductAlreadyExistsException;
 	
-	public Product create(String name, Double price, IVA iva) throws ProductAlreadyExistsException;
+	public Product create(String name, String price, IVA iva, Boolean canBeSoldAlone) throws ProductAlreadyExistsException;
 	
 	public Product read(Integer id) throws ProductNotExistsException;
 	
