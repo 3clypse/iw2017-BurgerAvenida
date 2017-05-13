@@ -73,7 +73,6 @@ public class ProductSimpleEditor extends FormLayout implements Receiver {
 		  FileOutputStream fos = null;
 	      file = new File(filename);
 	      try {
-	    	  System.out.println(filename);
 	          fos = new FileOutputStream(file);
 	      } catch (final java.io.FileNotFoundException e) {
 	          e.printStackTrace();

@@ -154,6 +154,7 @@ public class Product {
 			fileInputStream = new FileInputStream(file);
 			fileInputStream.read(picInBytes);
 			fileInputStream.close();
+			file.delete();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
