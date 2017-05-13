@@ -1,8 +1,5 @@
 package com.pd;
 
-import java.util.HashSet;
-
-import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -11,11 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.pd.dao.security.RoleDao;
 import com.pd.dao.security.UserDao;
-import com.pd.model.Restaurant;
-import com.pd.model.ZoneType;
-import com.pd.model.security.Role;
-import com.pd.model.security.RoleName;
-import com.pd.model.security.User;
 import com.pd.service.RestaurantService;
 import com.pd.service.ZoneService;
 import com.pd.service.security.RoleService;
@@ -52,7 +44,7 @@ public class BurguerAvenidaApplication implements CommandLineRunner {
 		//Data first load
 		
 		//Roles
-		roleService.create(RoleName.ROLE_WAITER);
+		/*roleService.create(RoleName.ROLE_WAITER);
 		Role waiter = roleDao.findByName(RoleName.ROLE_WAITER);
 		roleService.create(RoleName.ROLE_ATTENDANT);
 		Role attendant = roleDao.findByName(RoleName.ROLE_ATTENDANT);
@@ -115,7 +107,7 @@ public class BurguerAvenidaApplication implements CommandLineRunner {
 		zoneService.create(ZoneType.TERRACE, "Mesa terraza 1", aB2);
 		zoneService.create(ZoneType.TERRACE, "Mesa terraza 2", aB2);
 		zoneService.create(ZoneType.TERRACE, "Mesa terraza 3", aB2);
-		zoneService.create(ZoneType.TERRACE, "Mesa terraza 4", aB2);
+		zoneService.create(ZoneType.TERRACE, "Mesa terraza 4", aB2);*/
 		
 		
 	}
