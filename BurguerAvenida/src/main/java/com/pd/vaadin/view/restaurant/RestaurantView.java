@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import com.pd.dao.RestaurantDao;
+import com.pd.dao.security.UserDao;
 import com.pd.model.Restaurant;
+import com.pd.model.security.RoleName;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -39,6 +41,8 @@ public class RestaurantView extends VerticalLayout implements View {
 	private final RestaurantDao repo;
 
 	private final RestaurantEditor editor;
+	
+	private final UserDao userDao;
 
 	final Grid<Restaurant> grid;
 
@@ -47,9 +51,10 @@ public class RestaurantView extends VerticalLayout implements View {
 	private final Button addNewBtn;
 
 	@Autowired
-	public RestaurantView(RestaurantDao repo, RestaurantEditor editor) {
+	public RestaurantView(RestaurantDao repo, RestaurantEditor editor, UserDao userDao) {
 		this.repo = repo;
 		this.editor = editor;
+		this.userDao = userDao;
 		this.grid = new Grid<>(Restaurant.class);
 		this.filter = new TextField();
 		this.addNewBtn = new Button("New Restaurant", VaadinIcons.PLUS_CIRCLE_O);
@@ -99,5 +104,6 @@ public class RestaurantView extends VerticalLayout implements View {
 
 	@Override
 	public void enter(ViewChangeEvent event) {
+		editor.attendants.setItems(userDao.findByRole(RoleName.ROLE_ATTENDANT));
 	}
 }
