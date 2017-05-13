@@ -20,12 +20,12 @@ public class Client implements Serializable {
 	 */
 	private static final long serialVersionUID = 1696132505136810628L;
 	
-	@Id @GeneratedValue(strategy = GenerationType.AUTO) 
+	@Id @GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 	@Column(length = 32)
 	private String name;
 	@Column(length = 16)
-	private Integer phoneNumber;
+	private String phoneNumber;
 	@Column(length = 64)
 	private String address;
 	
@@ -36,9 +36,8 @@ public class Client implements Serializable {
 		super();
 	}
 
-	public Client(Integer id, String name, Integer phoneNumber, String address) {
+	public Client(String name, String phoneNumber, String address) {
 		super();
-		this.id = id;
 		this.name = name;
 		this.phoneNumber = phoneNumber;
 		this.address = address;
@@ -60,11 +59,11 @@ public class Client implements Serializable {
 		this.name = name;
 	}
 
-	public Integer getPhoneNumber() {
+	public String getPhoneNumber() {
 		return phoneNumber;
 	}
 
-	public void setPhoneNumber(Integer phoneNumber) {
+	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
 
