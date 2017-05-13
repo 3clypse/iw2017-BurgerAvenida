@@ -7,7 +7,9 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
+import com.pd.dao.RestaurantDao;
 import com.pd.dao.ZoneDao;
+import com.pd.model.Restaurant;
 import com.pd.model.Zone;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
@@ -39,6 +41,8 @@ public class ZoneView extends VerticalLayout implements View {
 	private final ZoneDao repo;
 
 	private final ZoneEditor editor;
+	
+	private final RestaurantDao restaurantDao;
 
 	final Grid<Zone> grid;
 
@@ -47,9 +51,10 @@ public class ZoneView extends VerticalLayout implements View {
 	private final Button addNewBtn;
 
 	@Autowired
-	public ZoneView(ZoneDao repo, ZoneEditor editor) {
+	public ZoneView(ZoneDao repo, ZoneEditor editor, RestaurantDao restaurantDao) {
 		this.repo = repo;
 		this.editor = editor;
+		this.restaurantDao = restaurantDao;
 		this.grid = new Grid<>(Zone.class);
 		this.filter = new TextField();
 		this.addNewBtn = new Button("New Zone", VaadinIcons.PLUS_CIRCLE_O);
@@ -99,5 +104,6 @@ public class ZoneView extends VerticalLayout implements View {
 
 	@Override
 	public void enter(ViewChangeEvent event) {
+		editor.restaurants.setItems((Collection<Restaurant>) restaurantDao.findAll());
 	}
 }
