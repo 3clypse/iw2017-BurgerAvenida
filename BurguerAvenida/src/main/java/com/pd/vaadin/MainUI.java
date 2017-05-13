@@ -47,7 +47,7 @@ public class MainUI extends UI {
         
 		getUI().getNavigator().setErrorView(ErrorView.class);
 		viewProvider.setAccessDeniedViewClass(UnauthorizedView.class);
-		
+		securityService.autologin("admin", "admin");
 		if (securityService.isLoggedIn()) {
 			showMainScreen();
 		} else {
@@ -65,7 +65,6 @@ public class MainUI extends UI {
 	
 	protected boolean login(String username, String password) {
 		if(securityService.autologin(username, password)){
-			//VaadinService.reinitializeSession(VaadinService.getCurrentRequest());
 			showMainScreen();
 			return true;
 		}else return false;

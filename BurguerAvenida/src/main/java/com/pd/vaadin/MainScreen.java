@@ -6,8 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pd.model.security.RoleName;
 import com.pd.service.security.SecurityService;
-import com.pd.vaadin.view.AboutView;
 import com.pd.vaadin.view.HomeView;
+import com.pd.vaadin.view.NewOrderView;
+import com.pd.vaadin.view.client.ClientView;
+import com.pd.vaadin.view.order.OrderView;
+import com.pd.vaadin.view.product.ProductCompositeView;
+import com.pd.vaadin.view.product.ProductSimpleView;
 import com.pd.vaadin.view.productfamily.ProductFamilyView;
 import com.pd.vaadin.view.restaurant.RestaurantView;
 import com.pd.vaadin.view.user.UserView;
@@ -57,7 +61,7 @@ public class MainScreen extends HorizontalLayout implements ViewDisplay {
 	@Override
     public void attach() {
         super.attach();
-        this.getUI().getNavigator().navigateTo(HomeView.VIEW_NAME);
+        this.getUI().getNavigator().navigateTo(NewOrderView.VIEW_NAME);
         buildMenu();
     }
 	
@@ -102,17 +106,21 @@ public class MainScreen extends HorizontalLayout implements ViewDisplay {
 		menuPart.addComponent(showMenu);
 		
 		menuItemsLayout = new CssLayout();
-		menuItemsLayout.addComponent(
-				createNavigationButton(
-						"Home", 
-						HomeView.VIEW_NAME,
-						VaadinIcons.HOME));
-		//if(securityService.hasRole(RoleName.ROLE_ATTENDANT))
-		menuItemsLayout.addComponent(
-				createNavigationButton(
-						"About", 
-						AboutView.VIEW_NAME,
-						VaadinIcons.INFO));
+		//if(securityService.hasRole(RoleName.ROLE_ATTENDANT)
+		//|| securityService.hasRole(RoleName.ROLE_WAITER)) {
+			menuItemsLayout.addComponent(
+					createNavigationButton(
+							"Home", 
+							HomeView.VIEW_NAME,
+							VaadinIcons.HOME));
+			
+			menuItemsLayout.addComponent(
+					createNavigationButton(
+							"New Order", 
+							NewOrderView.VIEW_NAME,
+							VaadinIcons.HOME));
+			
+		//}
 		
 		//ADMIN ZONE
 		if(securityService.hasRole(RoleName.ROLE_MANAGER)) {
@@ -121,6 +129,11 @@ public class MainScreen extends HorizontalLayout implements ViewDisplay {
 			button.setEnabled(false);
 			menuItemsLayout.addComponent(button);
 			
+			menuItemsLayout.addComponent(
+					createNavigationButton(
+							"Order", 
+							OrderView.VIEW_NAME,
+							VaadinIcons.WORKPLACE));
 			
 			menuItemsLayout.addComponent(
 					createNavigationButton(
@@ -145,6 +158,24 @@ public class MainScreen extends HorizontalLayout implements ViewDisplay {
 							"Restaurant", 
 							RestaurantView.VIEW_NAME,
 							VaadinIcons.SHOP));
+			
+			menuItemsLayout.addComponent(
+					createNavigationButton(
+							"Product Simple", 
+							ProductSimpleView.VIEW_NAME,
+							VaadinIcons.ANGLE_RIGHT));
+			
+			menuItemsLayout.addComponent(
+					createNavigationButton(
+							"Product Composite", 
+							ProductCompositeView.VIEW_NAME,
+							VaadinIcons.ANGLE_DOUBLE_RIGHT));
+			
+			menuItemsLayout.addComponent(
+					createNavigationButton(
+							"Client", 
+							ClientView.VIEW_NAME,
+							VaadinIcons.USERS));
 		}
 		
 		menuItemsLayout.setPrimaryStyleName(VALO_MENUITEMS);
