@@ -3,6 +3,7 @@ package com.pd.vaadin;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.pd.model.security.RoleName;
 import com.pd.service.security.SecurityService;
@@ -214,6 +215,8 @@ public class MainScreen extends HorizontalLayout implements ViewDisplay {
 		securityService.logout();
 		getSession().close();
 		getUI().getPage().reload();
+		SecurityContextHolder.getContext().setAuthentication(null);
+		this.getUI().getNavigator().navigateTo("");
 	}
 
 }

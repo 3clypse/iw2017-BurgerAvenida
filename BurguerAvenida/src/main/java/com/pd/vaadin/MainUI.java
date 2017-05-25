@@ -7,15 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pd.service.security.SecurityService;
 import com.pd.vaadin.utils.ErrorView;
 import com.pd.vaadin.utils.UnauthorizedView;
+import com.pd.vaadin.view.HomeView;
 import com.vaadin.annotations.PreserveOnRefresh;
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Viewport;
+import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
+import com.vaadin.shared.communication.PushMode;
+import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.navigator.SpringViewProvider;
+import com.vaadin.spring.server.SpringVaadinServlet;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -23,38 +28,46 @@ import com.vaadin.ui.themes.ValoTheme;
 @Theme("mytheme")
 @SpringUI
 @PreserveOnRefresh
-public class MainUI extends UI {
-	
+@Push(value = PushMode.AUTOMATIC, transport = Transport.WEBSOCKET_XHR)
+public class MainUI extends UI implements Broadcaster.BroadcastListener {
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -1465336204444520218L;
 
+	@WebServlet(value = { "/*", "/VAADIN/*" }, asyncSupported = true)
+	@VaadinServletConfiguration(productionMode = false, ui = MainUI.class)
+	public static class MyServlet extends SpringVaadinServlet {
+		private static final long serialVersionUID = -7398761406150484727L;
+	}
+	
 	@Autowired
 	SecurityService securityService;
 
 	@Autowired
 	SpringViewProvider viewProvider;
-	
+
 	@Autowired
-    MainScreen mainScreen;
-	
+	MainScreen mainScreen;
+
 	@Override
 	protected void init(VaadinRequest request) {
 		Responsive.makeResponsive(this);
-        getPage().setTitle("Burguer Avenida App");
-        addStyleName(ValoTheme.UI_WITH_MENU);
-        
+		getPage().setTitle("Burguer Avenida App");
+		addStyleName(ValoTheme.UI_WITH_MENU);
+
 		getUI().getNavigator().setErrorView(ErrorView.class);
 		viewProvider.setAccessDeniedViewClass(UnauthorizedView.class);
-		securityService.autologin("admin", "admin");
 		if (securityService.isLoggedIn()) {
 			showMainScreen();
 		} else {
+			Page.getCurrent().setUriFragment("!");
 			showLoginScreen();
 		}
+		Broadcaster.register(this);
 	}
-	
+
 	private void showLoginScreen() {
 		setContent(new LoginScreen(this::login));
 	}
@@ -62,18 +75,36 @@ public class MainUI extends UI {
 	private void showMainScreen() {
 		setContent(mainScreen);
 	}
-	
+
 	protected boolean login(String username, String password) {
-		if(securityService.autologin(username, password)){
+		if (securityService.autologin(username, password)) {
 			showMainScreen();
 			return true;
-		}else return false;
+		} else
+			return false;
 	}
-	
-	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
-	@VaadinServletConfiguration(ui = MainUI.class, productionMode = true)
-	public static class MyUIServlet extends VaadinServlet {
-		private static final long serialVersionUID = 452468769467758600L;
+
+	@Override
+	public void detach() {
+		Broadcaster.unregister(this);
+		super.detach();
 	}
-	
-}  
+
+	@Override
+	public void receiveBroadcast(/*Set<OrderLine> lines*/String msg) {
+		//VaadinSession.getCurrent().lock();
+		getSession().lock();
+		getUI().access(() -> {
+			System.out.println("DENTRO");
+			System.out.println(msg);
+			//System.out.println(lines);
+			//lines.forEach(l -> System.out.println(l.getProduct()));
+			HomeView.orderLineSet.add(msg);
+			HomeView.orderList.setItems(HomeView.orderLineSet);
+			//this.push();
+		});
+		//VaadinSession.getCurrent().unlock();
+		getSession().unlock();
+	}
+
+}
