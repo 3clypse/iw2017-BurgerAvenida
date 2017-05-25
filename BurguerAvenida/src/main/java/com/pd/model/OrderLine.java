@@ -21,14 +21,14 @@ public class OrderLine implements Serializable {
 	
 	private Integer amount;
 
-	@MapsId("OrderId")
-    @JoinColumn(name="order_id", insertable = false, updatable = false, nullable = false)
-    @ManyToOne 
+	@MapsId("orderId")
+    @JoinColumn(name="order_id")
+	@ManyToOne
     private Order orderObject;
 	
-	@MapsId("ProductId")
-    @JoinColumn(name="product_id", insertable = false, updatable = false, nullable = false)
-    @ManyToOne 
+	@MapsId("productId")
+    @JoinColumn(name="product_id")
+	@ManyToOne
     private Product product;
 	
 	private Double total;
@@ -58,6 +58,10 @@ public class OrderLine implements Serializable {
 		return total;
 	}
 
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+
 	public void setTotal(Double total) {
 		this.total = total;
 	}
@@ -83,6 +87,14 @@ public class OrderLine implements Serializable {
 		return id;
 	}
 	
+	public Order getOrderObject() {
+		return orderObject;
+	}
+
+	public void setOrderObject(Order orderObject) {
+		this.orderObject = orderObject;
+	}
+
 	public void calculateTotal() {
 		this.total = Double.parseDouble(product.getPrice()) * amount;
 	}
@@ -111,5 +123,5 @@ public class OrderLine implements Serializable {
 			return false;
 		return true;
 	}
-	
+
 }
