@@ -51,23 +51,24 @@ public class BurguerAvenidaApplication implements CommandLineRunner {
 		roleService.create(RoleName.ROLE_MANAGER);
 		Role manager = roleDao.findByName(RoleName.ROLE_MANAGER);
 		
+		//Restaurants
+		restaurantService.create("Avenida Burguer nº1", "Avenida Andalucia s/n", userService.read("lionel"));
+		restaurantService.create("Avenida Burguer nº2", "Calle Jerez nº 14", userService.read("cristiano"));
+		
 		//Manager
 		userService.save(
-				new User("admin", "admin", "Admin", "Admin", "admin@admin.com", new HashSet<>(Lists.newArrayList(manager))));
+				new User("admin", "admin", "Admin", "Admin", "admin@admin.com", null, new HashSet<>(Lists.newArrayList(manager))));
 		
 		//Attendants
 		userService.save(
-				new User("lionel", "lionel", "Leo Andres", "Messi", "leo@messi.com", new HashSet<>(Lists.newArrayList(attendant, waiter))));
+				new User("lionel", "lionel", "Leo Andres", "Messi", "leo@messi.com", null, new HashSet<>(Lists.newArrayList(attendant, waiter))));
 		userService.save(
-				new User("cristiano", "cristiano", "Cristiano", "Ronaldo", "cristiano@ronaldo.com", new HashSet<>(Lists.newArrayList(attendant, waiter))));
+				new User("cristiano", "cristiano", "Cristiano", "Ronaldo", "cristiano@ronaldo.com", null, new HashSet<>(Lists.newArrayList(attendant, waiter))));
 		
 		User cristiano = userService.read("cristiano");
 		cristiano.setRoles(roleService.findAll());
 		userDao.save(cristiano);
 		
-		//Restaurants
-		restaurantService.create("Avenida Burguer nº1", "Avenida Andalucia s/n", userService.read("lionel"));
-		restaurantService.create("Avenida Burguer nº2", "Calle Jerez nº 14", userService.read("cristiano"));
 		
 		//Zones
 		Restaurant aB1 = restaurantService.findByName("Avenida Burguer nº1");
