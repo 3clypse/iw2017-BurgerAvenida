@@ -24,8 +24,8 @@ public class Client implements Serializable {
 	private Integer id;
 	@Column(length = 32)
 	private String name;
-	@Column(length = 16)
-	private String phoneNumber;
+	@Column(length = 9)
+	private Integer phoneNumber;
 	@Column(length = 64)
 	private String address;
 	
@@ -36,7 +36,7 @@ public class Client implements Serializable {
 		super();
 	}
 
-	public Client(String name, String phoneNumber, String address) {
+	public Client(String name, Integer phoneNumber, String address) {
 		super();
 		this.name = name;
 		this.phoneNumber = phoneNumber;
@@ -59,11 +59,11 @@ public class Client implements Serializable {
 		this.name = name;
 	}
 
-	public String getPhoneNumber() {
+	public Integer getPhoneNumber() {
 		return phoneNumber;
 	}
 
-	public void setPhoneNumber(String phoneNumber) {
+	public void setPhoneNumber(Integer phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
 
