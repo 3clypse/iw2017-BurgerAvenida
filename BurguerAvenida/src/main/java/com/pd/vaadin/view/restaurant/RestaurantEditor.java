@@ -63,7 +63,7 @@ public class RestaurantEditor extends FormLayout {
 		
 		binder = new BeanValidationBinder<>(Restaurant.class);
 		binder.forField(attendants).bind("attendant");
-		binder.bindInstanceFields(this);
+		//binder.bindInstanceFields(this);
 
 		name.setSizeFull();
 		address.setSizeFull();
