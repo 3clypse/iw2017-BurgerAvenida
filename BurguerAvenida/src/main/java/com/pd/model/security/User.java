@@ -14,6 +14,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+
+import com.pd.model.Restaurant;
 
 @Entity
 public class User implements Serializable {
@@ -41,6 +44,9 @@ public class User implements Serializable {
 
 	@Column(length = 32)
 	private String email;
+	
+	@ManyToOne
+	private Restaurant workin;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(
@@ -53,7 +59,7 @@ public class User implements Serializable {
 		super();
 	}
 
-	public User(String username, String password, String firstname, String lastname, String email,
+	public User(String username, String password, String firstname, String lastname, String email, Restaurant workin, 
 			Set<Role> roles) {
 		super();
 		this.username = username;
@@ -61,6 +67,7 @@ public class User implements Serializable {
 		this.firstname = firstname;
 		this.lastname = lastname;
 		this.email = email;
+		this.workin = workin;
 		this.roles = roles;
 	}
 	
@@ -149,6 +156,14 @@ public class User implements Serializable {
 	@Override
 	public String toString() {
 		return firstname + ", " + lastname;
+	}
+
+	public Restaurant getWorkin() {
+		return workin;
+	}
+
+	public void setWorkin(Restaurant workin) {
+		this.workin = workin;
 	}
 	
 }

@@ -4,8 +4,10 @@ import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pd.dao.RestaurantDao;
 import com.pd.dao.security.RoleDao;
 import com.pd.dao.security.UserDao;
+import com.pd.model.Restaurant;
 import com.pd.model.security.Role;
 import com.pd.model.security.User;
 import com.pd.service.security.UserService;
@@ -16,6 +18,7 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.PasswordField;
@@ -41,6 +44,8 @@ public class UserEditor extends FormLayout {
 	@SuppressWarnings("unused")
 	private final UserService userService;
 	
+	@SuppressWarnings("unused")
+	private final RestaurantDao restaurantDao;
 
 	/**
 	 * The currently object
@@ -52,6 +57,7 @@ public class UserEditor extends FormLayout {
 	TextField firstname = new TextField("Firstname");
 	TextField lastname = new TextField("Lastname");
 	TextField email = new TextField("Email");
+	ComboBox<Restaurant> workin = new ComboBox<>("Work in");
 	TwinColSelect<Role> roles = new TwinColSelect<>("Roles");
 
 	Button save = new Button("Save", VaadinIcons.SAFE);
@@ -62,15 +68,18 @@ public class UserEditor extends FormLayout {
 	Binder<User> binder;
 
 	@Autowired
-	public UserEditor(UserDao repository, RoleDao roleDao, UserService userService) {
+	public UserEditor(UserDao repository, RoleDao roleDao, UserService userService, RestaurantDao restaurantDao) {
 		this.repository = repository;
 		this.roleDao = roleDao;
 		this.userService = userService;
+		this.restaurantDao = restaurantDao;
 
 		roles.setItems((Collection<Role>) roleDao.findAll());
-		addComponents(username, password, firstname, lastname, email, roles, actions);
+		workin.setItems((Collection<Restaurant>) restaurantDao.findAll());
 		
+		addComponents(username, password, firstname, lastname, email, workin, roles, actions);
 		binder = new BeanValidationBinder<>(User.class);
+		binder.forField(workin).bind("workin");
 		binder.bindInstanceFields(this);
 
 		username.setSizeFull();
@@ -78,6 +87,7 @@ public class UserEditor extends FormLayout {
 		firstname.setSizeFull();
 		lastname.setSizeFull();
 		email.setSizeFull();
+		workin.setSizeFull();
 		roles.setSizeFull();
 		
 		setSpacing(true);
