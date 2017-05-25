@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,7 +25,7 @@ public class Order implements Serializable {
 	 */
 	private static final long serialVersionUID = -7221091527474882362L;
 	
-	@Id @GeneratedValue(strategy = GenerationType.AUTO) 
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY) 
 	private Integer id;
 	
 	@Temporal(TemporalType.TIMESTAMP)
@@ -45,13 +46,16 @@ public class Order implements Serializable {
 	@ManyToOne
 	private Client client;
 	
+	@ManyToOne
+	private Restaurant restaurant;
+	
 	public Order() {
 		super();
 		this.status = OrderStatus.OPENED;
 		this.createdAt = new Date();
 	}
 	
-	@OneToMany(mappedBy = "orderObject")
+	@OneToMany(mappedBy = "orderObject", fetch = FetchType.EAGER)
 	private Set<OrderLine> lines = new HashSet<OrderLine>();
 
 	public Date getClosedAt() {
@@ -108,6 +112,14 @@ public class Order implements Serializable {
 
 	public void setZone(Zone zone) {
 		this.zone = zone;
+	}
+
+	public Restaurant getRestaurant() {
+		return restaurant;
+	}
+
+	public void setRestaurant(Restaurant restaurant) {
+		this.restaurant = restaurant;
 	}
 	
 }
