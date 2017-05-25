@@ -46,7 +46,7 @@ public class Product {
 	@Basic(fetch=FetchType.LAZY)
 	private byte[] image;
 	
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
 	private Set<ProductFamily> families = new HashSet<ProductFamily>();
 	
 	public Product() {
