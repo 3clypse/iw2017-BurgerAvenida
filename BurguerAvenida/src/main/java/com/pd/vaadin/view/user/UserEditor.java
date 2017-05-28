@@ -8,6 +8,7 @@ import com.pd.dao.RestaurantDao;
 import com.pd.dao.security.RoleDao;
 import com.pd.dao.security.UserDao;
 import com.pd.model.Client;
+import com.pd.model.ProductFamily;
 import com.pd.model.Restaurant;
 import com.pd.model.security.Role;
 import com.pd.model.security.User;
@@ -95,11 +96,46 @@ public class UserEditor extends FormLayout {
 		workin.setSizeFull();
 		roles.setSizeFull();
 		
-		username.setMaxLength(32);
+		username.setMaxLength(16);
 		password.setMaxLength(32);
-		firstname.setMaxLength(32);
+		firstname.setMaxLength(16);
 		lastname.setMaxLength(32);
-		email.setMaxLength(64);
+		email.setMaxLength(32);
+		
+		binder.forField(username)
+		.asRequired("Cant be empty")
+	    .withValidator(new StringLengthValidator(
+	        "Name must be between 2 and 16 characters long",
+	        2, 16))
+	    .bind(User::getUsername, User::setUsername);
+		
+		binder.forField(password)
+		.asRequired("Cant be empty")
+	    .withValidator(new StringLengthValidator(
+	        "Name must be between 8 and 32 characters long",
+	        8, 32))
+	    .bind(User::getPassword, User::setPassword);
+		
+		binder.forField(firstname)
+		.asRequired("Cant be empty")
+	    .withValidator(new StringLengthValidator(
+	        "Name must be between 2 and 16 characters long",
+	        2, 16))
+	    .bind(User::getFirstname, User::setFirstname);
+		
+		binder.forField(lastname)
+		.asRequired("Cant be empty")
+	    .withValidator(new StringLengthValidator(
+	        "Name must be between 2 and 32 characters long",
+	        2, 32))
+	    .bind(User::getLastname, User::setLastname);
+		
+		binder.forField(email)
+		.asRequired("Cant be empty")
+	    .withValidator(new StringLengthValidator(
+	        "Name must be between 2 and 32 characters long",
+	        2, 32))
+	    .bind(User::getEmail, User::setEmail);
 
 		
 		setSpacing(true);
