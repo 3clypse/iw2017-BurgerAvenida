@@ -3,14 +3,18 @@ package com.pd.vaadin.view.productfamily;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pd.dao.ProductFamilyDao;
+import com.pd.model.Client;
 import com.pd.model.ProductFamily;
 import com.vaadin.data.Binder;
+import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
@@ -46,17 +50,31 @@ public class ProductFamilyEditor extends VerticalLayout {
 		this.repository = repository;
 		
 		name.setSizeFull();
+		name.setMaxLength(32);
 		
 		addComponents(name, actions);
 
 		binder.bindInstanceFields(this);
+		
+		binder.forField(name)
+		.asRequired("Cant be empty")
+	    .withValidator(new StringLengthValidator(
+	        "Name must be between 2 and 32 characters long",
+	        2, 32))
+	    .bind(ProductFamily::getName, ProductFamily::setName);
 
 		setSpacing(true);
 		actions.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
 		save.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
-		save.addClickListener(e -> repository.save(currentObject));
+		//save.addClickListener(e -> repository.save(currentObject));
+		save.addClickListener(e -> {
+			if(binder.isValid())
+				repository.save(currentObject);
+			else
+				showNotification(new Notification("Some fields are not valid"));
+		});
 		delete.addClickListener(e -> repository.delete(currentObject));
 		cancel.addClickListener(e -> setVisible(false));
 		setVisible(false);
@@ -92,5 +110,10 @@ public class ProductFamilyEditor extends VerticalLayout {
 		save.addClickListener(e -> h.onChange());
 		delete.addClickListener(e -> h.onChange());
 	}
+	
+	private void showNotification(Notification notification) {
+        notification.setDelayMsec(2000);
+        notification.show(Page.getCurrent());
+    }
 	
 }

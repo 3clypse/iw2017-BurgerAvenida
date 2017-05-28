@@ -7,20 +7,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pd.dao.RestaurantDao;
 import com.pd.dao.security.RoleDao;
 import com.pd.dao.security.UserDao;
+import com.pd.model.Client;
 import com.pd.model.Restaurant;
 import com.pd.model.security.Role;
 import com.pd.model.security.User;
 import com.pd.service.security.UserService;
 import com.vaadin.data.BeanValidationBinder;
 import com.vaadin.data.Binder;
+import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.TwinColSelect;
@@ -77,6 +81,7 @@ public class UserEditor extends FormLayout {
 		roles.setItems((Collection<Role>) roleDao.findAll());
 		workin.setItems((Collection<Restaurant>) restaurantDao.findAll());
 		
+		
 		addComponents(username, password, firstname, lastname, email, workin, roles, actions);
 		binder = new BeanValidationBinder<>(User.class);
 		binder.forField(workin).bind("workin");
@@ -90,12 +95,25 @@ public class UserEditor extends FormLayout {
 		workin.setSizeFull();
 		roles.setSizeFull();
 		
+		username.setMaxLength(32);
+		password.setMaxLength(32);
+		firstname.setMaxLength(32);
+		lastname.setMaxLength(32);
+		email.setMaxLength(64);
+
+		
 		setSpacing(true);
 		actions.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
 		save.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
-		save.addClickListener(e -> userService.save(currentObject));
+		//save.addClickListener(e -> userService.save(currentObject));
+		save.addClickListener(e -> {
+			if(binder.isValid())
+				repository.save(currentObject);
+			else
+				showNotification(new Notification("Some fields are not valid"));
+		});
 		delete.addClickListener(e -> repository.delete(currentObject));
 		cancel.addClickListener(e -> setVisible(false));
 		setVisible(false);
@@ -128,5 +146,10 @@ public class UserEditor extends FormLayout {
 		save.addClickListener(e -> h.onChange());
 		delete.addClickListener(e -> h.onChange());
 	}
+	
+	private void showNotification(Notification notification) {
+        notification.setDelayMsec(2000);
+        notification.show(Page.getCurrent());
+    }
 	
 }
