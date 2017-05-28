@@ -39,7 +39,6 @@ public class BurguerAvenidaApplicationTests {
 	public void contextLoads() {
 	}
 	
-	
 	@Test
 	public void testVoidOrder() {
 		Order order = new Order();
@@ -50,26 +49,22 @@ public class BurguerAvenidaApplicationTests {
 		Assert.assertEquals(order2.getId(), order.getId());
 	}
 	
-	@SuppressWarnings("deprecation")
 	@Test
 	public void testOrderLine(){
 		Product p = new Product();
 				p.setName("Zumo");
 				p.setPrice("1");
-				//p = productDao.save(p);
 		
 		Order o = new Order();
-			  //o = orderDao.save(o);
 		
 		OrderLine ol = new OrderLine();
 				  ol.setProduct(p);
 				  ol.setOrderObject(o);
-				  ol.setAmount(5);
-				  //ol = orderLineDao.save(ol);
+				  ol.setAmount(5);;
 		
-		//Test if products are same and total price is the same.
-		Assert.assertEquals(ol.getProduct() , p);
-		Assert.assertEquals(ol.getTotal()   , new Double(5));
+		//Test if product and total price is the same.
+		Assert.assertEquals(ol.getProduct(), p);
+		Assert.assertEquals(ol.getTotal()  , new Double(5));
 	}
 
 }
