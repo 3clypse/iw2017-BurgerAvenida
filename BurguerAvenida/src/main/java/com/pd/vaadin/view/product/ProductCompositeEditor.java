@@ -18,8 +18,10 @@ import com.pd.model.ProductComposite;
 import com.pd.model.ProductFamily;
 import com.vaadin.data.BeanValidationBinder;
 import com.vaadin.data.Binder;
+import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
@@ -27,6 +29,7 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.TwinColSelect;
 import com.vaadin.ui.Upload;
@@ -121,14 +124,35 @@ public class ProductCompositeEditor extends FormLayout implements Receiver {
 		families.setSizeFull();
 		familiesComposition.setSizeFull();
 		
+		name.setMaxLength(32);
+		price.setMaxLength(16);
+		
+		binder.forField(name)
+		.asRequired("Cant be empty")
+	    .withValidator(new StringLengthValidator(
+	        "Address must be between 2 and 32 characters long",
+	        2, 32))
+	    .bind(Product::getName, Product::setName);
+		
+		//Price is a string field -> We'll not validate as number 
+		binder.forField(price)
+		.asRequired("Cant be empty")
+	    .withValidator(new StringLengthValidator(
+	        "Address must be between 1 and 16 characters long",
+	        1, 16))
+	    .bind(Product::getPrice, Product::setPrice);
+		
 		setSpacing(true);
 		actions.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
 		save.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
 		save.addClickListener(e -> {
-			if(file != null) currentObject.setImage(file);
-			repository.save(currentObject);
+			if(binder.isValid()){
+				if(file != null) currentObject.setImage(file);
+				repository.save(currentObject);
+			}else
+				showNotification(new Notification("Some fields are not valid"));
 		});
 		delete.addClickListener(e -> repository.delete(currentObject));
 		cancel.addClickListener(e -> setVisible(false));
@@ -163,5 +187,10 @@ public class ProductCompositeEditor extends FormLayout implements Receiver {
 		save.addClickListener(e -> h.onChange());
 		delete.addClickListener(e -> h.onChange());
 	}
+	
+	private void showNotification(Notification notification) {
+        notification.setDelayMsec(2000);
+        notification.show(Page.getCurrent());
+    }
 	
 }
