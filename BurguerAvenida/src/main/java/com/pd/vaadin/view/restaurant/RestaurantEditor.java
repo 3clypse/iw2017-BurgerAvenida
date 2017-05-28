@@ -5,18 +5,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pd.dao.RestaurantDao;
 import com.pd.dao.security.UserDao;
 import com.pd.model.Restaurant;
+import com.pd.model.Zone;
 import com.pd.model.security.RoleName;
 import com.pd.model.security.User;
 import com.vaadin.data.BeanValidationBinder;
 import com.vaadin.data.Binder;
+import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -42,7 +46,7 @@ public class RestaurantEditor extends FormLayout {
 	private Restaurant currentObject;
 
 	TextField name = new TextField("Name");
-	TextField address = new TextField("Adress");
+	TextField address = new TextField("Address");
 	ComboBox<User> attendants = new ComboBox<>("Attendant");
 
 	Button save = new Button("Save", VaadinIcons.SAFE);
@@ -69,12 +73,35 @@ public class RestaurantEditor extends FormLayout {
 		address.setSizeFull();
 		attendants.setSizeFull();
 		
+		name.setMaxLength(32);
+		address.setMaxLength(64);
+		
 		setSpacing(true);
 		actions.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
 		save.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+		
+		binder.forField(name)
+		.asRequired("Cant be empty")
+	    .withValidator(new StringLengthValidator(
+	        "Address must be between 2 and 32 characters long",
+	        2, 32))
+	    .bind(Restaurant::getName, Restaurant::setName);
+		
+		binder.forField(address)
+		.asRequired("Cant be empty")
+	    .withValidator(new StringLengthValidator(
+	        "Address must be between 2 and 64 characters long",
+	        2, 64))
+	    .bind(Restaurant::getAddress, Restaurant::setAddress);
 
-		save.addClickListener(e -> repository.save(currentObject));
+		//save.addClickListener(e -> repository.save(currentObject));
+		save.addClickListener(e -> {
+			if(binder.isValid())
+				repository.save(currentObject);
+			else
+				showNotification(new Notification("Some fields are not valid"));
+		});
 		delete.addClickListener(e -> repository.delete(currentObject));
 		cancel.addClickListener(e -> setVisible(false));
 		setVisible(false);
@@ -107,5 +134,10 @@ public class RestaurantEditor extends FormLayout {
 		save.addClickListener(e -> h.onChange());
 		delete.addClickListener(e -> h.onChange());
 	}
+	
+	private void showNotification(Notification notification) {
+        notification.setDelayMsec(2000);
+        notification.show(Page.getCurrent());
+    }
 	
 }
