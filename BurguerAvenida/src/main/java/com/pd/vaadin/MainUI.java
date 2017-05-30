@@ -91,19 +91,25 @@ public class MainUI extends UI implements Broadcaster.BroadcastListener {
 	}
 
 	@Override
-	public void receiveBroadcast(/*Set<OrderLine> lines*/String msg) {
-		//VaadinSession.getCurrent().lock();
+	public void receiveBroadcast(String msg) {
 		getSession().lock();
 		getUI().access(() -> {
-			System.out.println("DENTRO");
-			System.out.println(msg);
-			//System.out.println(lines);
-			//lines.forEach(l -> System.out.println(l.getProduct()));
-			HomeView.orderLineSet.add(msg);
-			HomeView.orderList.setItems(HomeView.orderLineSet);
-			//this.push();
+			if(msg.startsWith("LOCAL")) {
+				String orderLineStr = msg.replace("LOCAL", "");
+				HomeView.orderLineSetLocal.add(orderLineStr);
+				HomeView.orderListLocal.setItems(HomeView.orderLineSetLocal);
+			}
+			if(msg.startsWith("HOMEDELIVERY")) {
+				String orderLineStr = msg.replace("HOMEDELIVERY", "");
+				HomeView.orderLineSetHome.add(orderLineStr);
+				HomeView.orderListHome.setItems(HomeView.orderLineSetHome);
+			}
+			if(msg.startsWith("TOTAKEAWAY")) {
+				String orderLineStr = msg.replace("TOTAKEAWAY", "");
+				HomeView.orderLineSetAway.add(orderLineStr);
+				HomeView.orderListAway.setItems(HomeView.orderLineSetAway);
+			}
 		});
-		//VaadinSession.getCurrent().unlock();
 		getSession().unlock();
 	}
 

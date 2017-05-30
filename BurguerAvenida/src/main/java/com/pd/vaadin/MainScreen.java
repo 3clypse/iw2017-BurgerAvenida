@@ -7,8 +7,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.pd.model.security.RoleName;
 import com.pd.service.security.SecurityService;
+import com.pd.vaadin.view.CloseOrderView;
 import com.pd.vaadin.view.HomeView;
 import com.pd.vaadin.view.NewOrderView;
+import com.pd.vaadin.view.UpdateOrderView;
 import com.pd.vaadin.view.client.ClientView;
 import com.pd.vaadin.view.order.OrderView;
 import com.pd.vaadin.view.product.ProductCompositeView;
@@ -107,11 +109,11 @@ public class MainScreen extends HorizontalLayout implements ViewDisplay {
 		menuPart.addComponent(showMenu);
 		
 		menuItemsLayout = new CssLayout();
-		//if(securityService.hasRole(RoleName.ROLE_ATTENDANT)
-		//|| securityService.hasRole(RoleName.ROLE_WAITER)) {
+		if(securityService.hasRole(RoleName.ROLE_ATTENDANT)
+		|| securityService.hasRole(RoleName.ROLE_WAITER)) {
 			menuItemsLayout.addComponent(
 					createNavigationButton(
-							"Home", 
+							"Kitchen", 
 							HomeView.VIEW_NAME,
 							VaadinIcons.HOME));
 			
@@ -121,7 +123,23 @@ public class MainScreen extends HorizontalLayout implements ViewDisplay {
 							NewOrderView.VIEW_NAME,
 							VaadinIcons.HOME));
 			
-		//}
+			menuItemsLayout.addComponent(
+					createNavigationButton(
+							"Update Order", 
+							UpdateOrderView.VIEW_NAME,
+							VaadinIcons.HOME));
+			
+			menuItemsLayout.addComponent(
+					createNavigationButton(
+							"Close Order", 
+							CloseOrderView.VIEW_NAME,
+							VaadinIcons.HOME));
+		}
+			
+		if(securityService.hasRole(RoleName.ROLE_ATTENDANT)) {
+			
+		}
+			
 		
 		//ADMIN ZONE
 		if(securityService.hasRole(RoleName.ROLE_MANAGER)) {
