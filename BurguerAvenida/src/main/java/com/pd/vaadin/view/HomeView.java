@@ -1,7 +1,6 @@
 package com.pd.vaadin.view;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -12,9 +11,6 @@ import com.pd.dao.OrderDao;
 import com.pd.dao.OrderLineDao;
 import com.pd.dao.RestaurantDao;
 import com.pd.dao.security.UserDao;
-import com.pd.model.Order;
-import com.pd.model.OrderStatus;
-import com.pd.model.OrderType;
 import com.pd.model.Restaurant;
 import com.pd.model.security.User;
 import com.pd.vaadin.utils.SecurityUtils;
@@ -40,8 +36,8 @@ public class HomeView extends VerticalLayout implements View {
 	 */
 	private static final long serialVersionUID = -6053541745106875920L;
 
-	public static final String VIEW_ROUTE = "Home";
-	public static final String VIEW_NAME = "Home";
+	public static final String VIEW_ROUTE = "Kitchen";
+	public static final String VIEW_NAME = "Kitchen";
 
 	private final RestaurantDao restaurantDao;
 
@@ -58,10 +54,16 @@ public class HomeView extends VerticalLayout implements View {
 	private Restaurant currentRestaurant;
 	private VerticalLayout verticalTitleLayout;
 
-	public static Grid<String> orderList = new Grid<>();
-	public static Set<String> orderLineSet = new HashSet<String>();
+	public static Grid<String> orderListLocal = new Grid<>();
+	public static Set<String> orderLineSetLocal = new HashSet<String>();
 	
-	HorizontalLayout ordersLayout = new HorizontalLayout();
+	public static Grid<String> orderListHome = new Grid<>();
+	public static Set<String> orderLineSetHome = new HashSet<String>();
+	
+	public static Grid<String> orderListAway = new Grid<>();
+	public static Set<String> orderLineSetAway = new HashSet<String>();
+	
+	VerticalLayout ordersLayout = new VerticalLayout();
 	Panel totakeaway = new Panel();
 	Panel homedelivery = new Panel();
 	Panel local = new Panel();
@@ -77,6 +79,7 @@ public class HomeView extends VerticalLayout implements View {
 	@PostConstruct
 	void init() {
 		ordersLayoutBoolean = true;
+		ordersLayout.setResponsive(true);
 		this.setResponsive(true);
 		Label header = new Label("Current Orders");
 		header.addStyleName(ValoTheme.LABEL_H2);
@@ -85,28 +88,55 @@ public class HomeView extends VerticalLayout implements View {
 		verticalTitleLayout.setMargin(new MarginInfo(false, false, false, true));
 		addComponent(verticalTitleLayout);
 		loadRestaurant();
-		// orderLineSet = new
-		// HashSet<OrderLine>(Lists.newArrayList(orderLineDao.findAll()));
-		// System.out.println(orderLineSet.size());
-		// orderList.setItems(orderLineSet);
 		if(currentRestaurant != null) {
-			orderList = new Grid<String>();
-			orderList.setWidth(100, Unit.PERCENTAGE);
-			orderList.setHeight(600, Unit.PIXELS);
-			orderList.addAttachListener(event -> {
-				orderList.setItems(orderLineSet);
+			//Grid for local orders
+			orderListLocal = new Grid<String>();
+			orderListLocal.setSizeFull();
+			orderListLocal.setHeight(240, Unit.PIXELS);
+			orderListLocal.addAttachListener(event -> {
+				orderListLocal.setItems(orderLineSetLocal);
 			});
-			orderList.addColumn(String::toString).setCaption("OrderLine").setId("orderline");
-			//orderList.addColumn(OrderLine::getAmount).setCaption("Amount").setId("amount");
-			//orderList.addColumn(OrderLine::getTotal).setCaption("Total").setId("total");
-			//orderList.getColumn("productname").setExpandRatio(1);
-			//orderList.getColumn("amount").setWidth(100);
-			//orderList.getColumn("total").setWidth(100);
-			addComponent(orderList);
+			orderListLocal.addItemClickListener(event -> {
+				String str = event.getItem();
+				orderLineSetLocal.removeIf(p->p.equals(str));
+				orderListLocal.setItems(orderLineSetLocal);
+			});
+			orderListLocal.addColumn(String::toString).setCaption("LOCAL").setId("orderlinelocal");
+			ordersLayout.addComponent(orderListLocal);
+			//Grid for homedelivery orders
+			orderListHome = new Grid<String>();
+			orderListHome.setSizeFull();
+			orderListHome.setHeight(240, Unit.PIXELS);
+			orderListHome.addAttachListener(event -> {
+				orderListHome.setItems(orderLineSetHome);
+			});
+			orderListHome.addItemClickListener(event -> {
+				String str = event.getItem();
+				orderLineSetHome.removeIf(p->p.equals(str));
+				orderListHome.setItems(orderLineSetHome);
+			});
+			orderListHome.addColumn(String::toString).setCaption("HOMEDELIVERY").setId("orderlinehome");
+			ordersLayout.addComponent(orderListHome);
+			//Grid for takeaway orders
+			orderListAway = new Grid<String>();
+			orderListAway.setSizeFull();
+			orderListAway.setHeight(240, Unit.PIXELS);
+			orderListAway.addAttachListener(event -> {
+				orderListAway.setItems(orderLineSetAway);
+			});
+			orderListAway.addItemClickListener(event -> {
+				String str = event.getItem();
+				orderLineSetAway.removeIf(p->p.equals(str));
+				orderListAway.setItems(orderLineSetAway);
+			});
+			orderListAway.addColumn(String::toString).setCaption("TAKEAWAY").setId("orderlineaway");
+			ordersLayout.addComponent(orderListAway);
+			
+			addComponent(ordersLayout);
 		}
 		
 	}
-
+	
 	private void loadRestaurant() {
 		currentUser = userDao.findByUsername(SecurityUtils.getCurrentUser());
 		if (currentUser.getUsername().equals("admin")) {
@@ -127,57 +157,9 @@ public class HomeView extends VerticalLayout implements View {
 		verticalTitleLayout.addComponent(new HorizontalLayout(labelRestaurant));
 	}
 
-	private void setOrdersLayout() {
-		ordersLayoutBoolean = false;
-		totakeaway.setCaption("To take away orders");
-		homedelivery.setCaption("Home delivery orders");
-		local.setCaption("Local orders");
-		totakeaway.setSizeFull();
-		homedelivery.setSizeFull();
-		local.setSizeFull();
-		ordersLayout.setSizeFull();
-		ordersLayout.addComponent(totakeaway);
-		ordersLayout.addComponent(homedelivery);
-		ordersLayout.addComponent(local);
-		// Panel for local
-		VerticalLayout hlLocal = new VerticalLayout();
-		List<Order> currentOpenedOrders = orderDao.findByOpenStatus(OrderStatus.OPENED, currentRestaurant);
-		currentOpenedOrders.stream().filter(o -> o.getType() == OrderType.LOCAL).forEach(o -> {
-			StringBuilder str = new StringBuilder();
-			//System.out.println(o.getLines().size());
-			o.getLines().forEach(l -> {
-				str.append(l.getProduct().getName());
-				str.append(", " + l.getAmount() + " units");
-			});
-			Label lb = new Label("id: " + str.toString());
-			hlLocal.addComponent(lb);
-		});
-		local.setContent(hlLocal);
-		// Panel for take away
-		VerticalLayout hlAway = new VerticalLayout();
-		currentOpenedOrders.stream().filter(o -> o.getType() == OrderType.TOTAKEAWAY).forEach(o -> {
-			Label lb = new Label(o.getId().toString());
-			hlAway.addComponent(lb);
-		});
-		totakeaway.setContent(hlAway);
-		// Panel for delivery
-		VerticalLayout hlDelivery = new VerticalLayout();
-		currentOpenedOrders.stream().filter(o -> o.getType() == OrderType.HOMEDELIVERY).forEach(o -> {
-			Label lb = new Label(o.getId().toString());
-			hlDelivery.addComponent(lb);
-		});
-		homedelivery.setContent(hlDelivery);
-		addComponent(ordersLayout);
-		
-	}
-
 	@Override
 	public void enter(ViewChangeEvent event) {
-		if (currentRestaurant != null) {
-			ordersLayout.removeAllComponents();
-			setOrdersLayout();
-			//System.out.println(orderLineSet.size());
-		}
+		
 	}
 
 }
