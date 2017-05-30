@@ -110,7 +110,6 @@ public class ProductCompositeView extends VerticalLayout implements View {
 	@Override
 	public void enter(ViewChangeEvent event) {
 		editor.families.setItems((Collection<ProductFamily>) familyDao.findAll());
-		editor.familiesComposition.setItems((Collection<ProductFamily>) familyDao.findAll());
 		editor.products.setItems((Collection<Product>) productDao.findAll());
 	}
 }

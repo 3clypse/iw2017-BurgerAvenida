@@ -22,7 +22,7 @@ public class ProductServiceImpl implements ProductService {
 	private ProductDao productDao;
 	
 	@Override
-	public Product create(String name, String price, IVA iva, Set<Product> products, Boolean canBeSoldAlone) throws ProductAlreadyExistsException {
+	public Product create(String name, Double price, IVA iva, Set<Product> products, Boolean canBeSoldAlone) throws ProductAlreadyExistsException {
 		Product product = productDao.findByName(name);
 		if(product != null)
 			throw new ProductAlreadyExistsException();
@@ -33,7 +33,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public Product create(String name, String price, IVA iva, Boolean canBeSoldAlone) throws ProductAlreadyExistsException {
+	public Product create(String name, Double price, IVA iva, Boolean canBeSoldAlone) throws ProductAlreadyExistsException {
 		Product product = productDao.findByName(name);
 		if(product != null)
 			throw new ProductAlreadyExistsException();

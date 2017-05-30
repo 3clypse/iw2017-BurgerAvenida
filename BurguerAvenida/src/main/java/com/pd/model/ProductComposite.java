@@ -29,26 +29,17 @@ public class ProductComposite extends Product implements Serializable {
 	)
 	private Set<Product> products = new HashSet<Product>();
 	
-	@ManyToMany(fetch = FetchType.EAGER)
-	private Set<ProductFamily> familiesComposition = new HashSet<ProductFamily>();
-	
 	public ProductComposite() {
 		super();
 	}
 	
-	public ProductComposite(String name, String price, IVA iva, Boolean canBeSoldAlone) {
+	public ProductComposite(String name, Double price, IVA iva, Boolean canBeSoldAlone) {
 		super(name, price, iva, canBeSoldAlone);
 	}
 	
-	public ProductComposite(String name, String price, IVA iva, Set<Product> products, Boolean canBeSoldAlone) {
+	public ProductComposite(String name, Double price, IVA iva, Set<Product> products, Boolean canBeSoldAlone) {
 		super(name, price, iva, canBeSoldAlone);
 		this.products = products;
-	}
-	
-	public ProductComposite(String name, String price, IVA iva, Set<Product> products, Set<ProductFamily> familiesComposition, Boolean canBeSoldAlone) {
-		super(name, price, iva, canBeSoldAlone);
-		this.products = products;
-		this.familiesComposition = familiesComposition;
 	}
 
 	public Set<Product> getProducts() {
@@ -57,14 +48,6 @@ public class ProductComposite extends Product implements Serializable {
 
 	public void setProducts(Set<Product> products) {
 		this.products = products;
-	}
-
-	public Set<ProductFamily> getFamiliesComposition() {
-		return familiesComposition;
-	}
-
-	public void setFamiliesComposition(Set<ProductFamily> familiesComposition) {
-		this.familiesComposition = familiesComposition;
 	}
 	
 	@Override

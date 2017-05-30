@@ -18,7 +18,7 @@ public class ProductSimple extends Product implements Serializable {
 		super();
 	}
 	
-	public ProductSimple(String name, String price, IVA iva, Boolean cantBeSoldAlone) {
+	public ProductSimple(String name, Double price, IVA iva, Boolean cantBeSoldAlone) {
 		super(name, price, iva, cantBeSoldAlone);
 	}
 

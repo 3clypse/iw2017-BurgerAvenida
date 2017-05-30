@@ -15,10 +15,9 @@ import com.pd.model.IVA;
 import com.pd.model.Product;
 import com.pd.model.ProductFamily;
 import com.pd.model.ProductSimple;
-import com.pd.model.Zone;
 import com.vaadin.data.BeanValidationBinder;
 import com.vaadin.data.Binder;
-import com.vaadin.data.converter.StringToIntegerConverter;
+import com.vaadin.data.converter.StringToDoubleConverter;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.icons.VaadinIcons;
@@ -46,12 +45,11 @@ public class ProductSimpleEditor extends FormLayout implements Receiver {
 	 */
 	private static final long serialVersionUID = 1700349086596241763L;
 
-	
 	private final ProductSimpleDao repository;
-	
+
 	@SuppressWarnings("unused")
 	private final ProductFamilyDao familyDao;
-	
+
 	/**
 	 * The currently object
 	 */
@@ -62,10 +60,10 @@ public class ProductSimpleEditor extends FormLayout implements Receiver {
 	ComboBox<IVA> iva = new ComboBox<IVA>("IVA");
 	ComboBox<Boolean> canBeSoldAlone = new ComboBox<Boolean>("Can be sold alone");
 	TwinColSelect<ProductFamily> families = new TwinColSelect<ProductFamily>("Product families");
-	
+
 	final Upload upload = new Upload("Imagen upload", this);
 	HorizontalLayout imageLayout = new HorizontalLayout();
-	
+
 	Button save = new Button("Save", VaadinIcons.SAFE);
 	Button cancel = new Button("Cancel");
 	Button delete = new Button("Delete", VaadinIcons.ERASER);
@@ -76,17 +74,17 @@ public class ProductSimpleEditor extends FormLayout implements Receiver {
 
 	@Override
 	public OutputStream receiveUpload(String filename, String mimeType) {
-		  FileOutputStream fos = null;
-	      file = new File(filename);
-	      try {
-	          fos = new FileOutputStream(file);
-	      } catch (final java.io.FileNotFoundException e) {
-	          e.printStackTrace();
-	          return null;
-	      }
-	      return fos;
+		FileOutputStream fos = null;
+		file = new File(filename);
+		try {
+			fos = new FileOutputStream(file);
+		} catch (final java.io.FileNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return fos;
 	}
-	
+
 	@Autowired
 	public ProductSimpleEditor(ProductSimpleDao repository, ProductFamilyDao familyDao) {
 		this.repository = repository;
@@ -95,51 +93,52 @@ public class ProductSimpleEditor extends FormLayout implements Receiver {
 		iva.setEmptySelectionAllowed(false);
 		upload.setImmediateMode(false);
 		upload.setButtonCaption("Upload Now");
-		
+
 		iva.setItems(EnumSet.allOf(IVA.class));
 		families.setItems((Collection<ProductFamily>) familyDao.findAll());
 		canBeSoldAlone.setEmptySelectionAllowed(false);
 		canBeSoldAlone.setItems(Arrays.asList(true, false));
 		addComponents(name, price, iva, canBeSoldAlone, families, upload, actions);
-		
+
 		binder = new BeanValidationBinder<>(ProductSimple.class);
-		iva.setItemCaptionGenerator(iva -> iva+", "+iva.getIVA());
-		binder.bindInstanceFields(this);
+		iva.setItemCaptionGenerator(iva -> iva + " (" + iva.getIVA() + ")");
 
 		name.setSizeFull();
 		price.setSizeFull();
 		canBeSoldAlone.setSizeFull();
 		iva.setSizeFull();
 		families.setSizeFull();
-		
+
 		name.setMaxLength(32);
 		price.setMaxLength(16);
-		
-		binder.forField(name)
-		.asRequired("Cant be empty")
-	    .withValidator(new StringLengthValidator(
-	        "Address must be between 2 and 32 characters long",
-	        2, 32))
-	    .bind(Product::getName, Product::setName);
-		
-		//Price is a string field -> We'll not validate as number 
+
+		binder.forField(name).asRequired("Cant be empty")
+				.withValidator(new StringLengthValidator("Address must be between 2 and 32 characters long", 2, 32))
+				.bind(Product::getName, Product::setName);
+
 		binder.forField(price)
-		.asRequired("Cant be empty")
-	    .withValidator(new StringLengthValidator(
-	        "Address must be between 1 and 16 characters long",
-	        1, 16))
-	    .bind(Product::getPrice, Product::setPrice);
+				.asRequired("Cant be empty")
+				.withNullRepresentation("")
+				.withConverter(new StringToDoubleConverter("Must enter a number"))
+				.bind(ProductSimple::getPrice, ProductSimple::setPrice);
 		
+		binder.forField(iva).bind(ProductSimple::getIva, ProductSimple::setIva);
+		
+		binder.forField(canBeSoldAlone).bind(ProductSimple::getCanBeSoldAlone, ProductSimple::setCanBeSoldAlone);
+
+		binder.forField(families).bind(ProductSimple::getFamilies, ProductSimple::setFamilies);
+
 		setSpacing(true);
 		actions.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
 		save.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
 		save.addClickListener(e -> {
-			if(binder.isValid()){
-				if(file != null) currentObject.setImage(file);
+			if (binder.isValid()) {
+				if (file != null)
+					currentObject.setImage(file);
 				repository.save(currentObject);
-			}else
+			} else
 				showNotification(new Notification("Some fields are not valid"));
 		});
 		delete.addClickListener(e -> repository.delete(currentObject));
@@ -159,26 +158,31 @@ public class ProductSimpleEditor extends FormLayout implements Receiver {
 		final boolean persisted = c.getId() != null;
 		if (persisted) {
 			currentObject = repository.findOne(c.getId());
-		}
-		else {
+		} else {
 			currentObject = c;
 		}
-		
 		cancel.setVisible(persisted);
-		
-		binder.setBean(currentObject);
-		
+
+		if (currentObject != null)
+			binder.setBean(currentObject);
+		else {
+			binder.writeBeanIfValid(currentObject);
+		}
+
 		setVisible(true);
 	}
-	
+
 	public void setChangeHandler(ChangeHandler h) {
-		save.addClickListener(e -> h.onChange());
+		save.addClickListener(e -> {
+			if (binder.isValid())
+				h.onChange();
+		});
 		delete.addClickListener(e -> h.onChange());
 	}
-	
+
 	private void showNotification(Notification notification) {
-        notification.setDelayMsec(2000);
-        notification.show(Page.getCurrent());
-    }
+		notification.setDelayMsec(2000);
+		notification.show(Page.getCurrent());
+	}
 
 }

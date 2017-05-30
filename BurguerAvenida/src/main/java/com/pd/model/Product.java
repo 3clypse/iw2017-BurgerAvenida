@@ -14,6 +14,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -36,8 +38,9 @@ public class Product {
 	@Column(length = 32, unique = true)
 	private String name;
 	
-	private String price;
+	private Double price;
 	
+	@Enumerated(EnumType.STRING)
 	private IVA iva;
 	
 	private Boolean canBeSoldAlone;
@@ -46,14 +49,14 @@ public class Product {
 	@Basic(fetch=FetchType.LAZY)
 	private byte[] image;
 	
-	@ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+	@ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
 	private Set<ProductFamily> families = new HashSet<ProductFamily>();
 	
 	public Product() {
 		super();
 	}
 	
-	public Product(String name, String price, IVA iva, Boolean canBeSoldAlone) {
+	public Product(String name, Double price, IVA iva, Boolean canBeSoldAlone) {
 		super();
 		this.name = name;
 		this.price = price;
@@ -61,7 +64,7 @@ public class Product {
 		this.canBeSoldAlone = canBeSoldAlone;
 	}
 	
-	public Product(String name, String price, IVA iva, Set<ProductFamily> families, Boolean canBeSoldAlone) {
+	public Product(String name, Double price, IVA iva, Set<ProductFamily> families, Boolean canBeSoldAlone) {
 		super();
 		this.name = name;
 		this.price = price;
@@ -70,11 +73,11 @@ public class Product {
 		this.canBeSoldAlone = canBeSoldAlone;
 	}
 
-	public String getPrice() {
+	public Double getPrice() {
 		return price;
 	}
 
-	public void setPrice(String price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
 
