@@ -33,6 +33,8 @@ public class OrderLine implements Serializable {
 	
 	private Double total;
 	
+	private Boolean isInKitchen;
+	
 	public OrderLine() {
 		super();
 	}
@@ -43,6 +45,7 @@ public class OrderLine implements Serializable {
 		this.product = product;
 		this.id = new OrderLinePK(orderObject.getId(), product.getId());
 		this.amount = amount;
+		this.isInKitchen = false;
 		calculateTotal();
 	}
 	
@@ -51,6 +54,7 @@ public class OrderLine implements Serializable {
 		this.orderObject = orderObject;
 		this.product = product;
 		this.id = new OrderLinePK(orderObject.getId(), product.getId());
+		this.isInKitchen = false;
 		calculateTotal();
 	}
 	
@@ -96,7 +100,15 @@ public class OrderLine implements Serializable {
 	}
 
 	public void calculateTotal() {
-		this.total = Double.parseDouble(product.getPrice()) * amount;
+		this.total = (product.getPrice() * (1 + product.getIva().getIVA()) ) * amount;
+	}
+	
+	public Boolean getIsInKitchen() {
+		return isInKitchen;
+	}
+
+	public void setIsInKitchen(Boolean isInKitchen) {
+		this.isInKitchen = isInKitchen;
 	}
 
 	@Override

@@ -49,6 +49,8 @@ public class Order implements Serializable {
 	@ManyToOne
 	private Restaurant restaurant;
 	
+	private Double total;
+	
 	public Order() {
 		super();
 		this.status = OrderStatus.OPENED;
@@ -120,6 +122,14 @@ public class Order implements Serializable {
 
 	public void setRestaurant(Restaurant restaurant) {
 		this.restaurant = restaurant;
+	}
+
+	public Double getTotal() {
+		return total;
+	}
+
+	public void setTotal(Double total) {
+		this.total = total;
 	}
 	
 }
