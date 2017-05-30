@@ -53,7 +53,7 @@ public class BurguerAvenidaApplicationTests {
 	public void testOrderLine(){
 		Product p = new Product();
 				p.setName("Zumo");
-				p.setPrice("1");
+				p.setPrice(1.0);
 		
 		Order o = new Order();
 		
