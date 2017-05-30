@@ -1,7 +1,7 @@
 package com.pd.model;
 
 public enum IVA {
-	TYPE1(.1f), TYPE2(.21f);
+	TYPE1(.10f), TYPE2(.21f);
 	
 	private final double iva;
 
