@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pd.dao.RestaurantDao;
 import com.pd.dao.security.RoleDao;
 import com.pd.dao.security.UserDao;
-import com.pd.model.Client;
-import com.pd.model.ProductFamily;
 import com.pd.model.Restaurant;
 import com.pd.model.security.Role;
 import com.pd.model.security.User;
@@ -112,28 +110,28 @@ public class UserEditor extends FormLayout {
 		binder.forField(password)
 		.asRequired("Cant be empty")
 	    .withValidator(new StringLengthValidator(
-	        "Name must be between 8 and 32 characters long",
-	        8, 32))
+	        "Passowrd must be between 8 and 32 characters long",
+	        8, 128))
 	    .bind(User::getPassword, User::setPassword);
 		
 		binder.forField(firstname)
 		.asRequired("Cant be empty")
 	    .withValidator(new StringLengthValidator(
-	        "Name must be between 2 and 16 characters long",
+	        "Firstname must be between 2 and 16 characters long",
 	        2, 16))
 	    .bind(User::getFirstname, User::setFirstname);
 		
 		binder.forField(lastname)
 		.asRequired("Cant be empty")
 	    .withValidator(new StringLengthValidator(
-	        "Name must be between 2 and 32 characters long",
+	        "Lastname must be between 2 and 32 characters long",
 	        2, 32))
 	    .bind(User::getLastname, User::setLastname);
 		
 		binder.forField(email)
 		.asRequired("Cant be empty")
 	    .withValidator(new StringLengthValidator(
-	        "Name must be between 2 and 32 characters long",
+	        "Email must be between 2 and 32 characters long",
 	        2, 32))
 	    .bind(User::getEmail, User::setEmail);
 
@@ -143,10 +141,9 @@ public class UserEditor extends FormLayout {
 		save.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
-		//save.addClickListener(e -> userService.save(currentObject));
 		save.addClickListener(e -> {
 			if(binder.isValid())
-				repository.save(currentObject);
+				userService.save(currentObject);
 			else
 				showNotification(new Notification("Some fields are not valid"));
 		});
@@ -173,13 +170,20 @@ public class UserEditor extends FormLayout {
 		}
 		cancel.setVisible(persisted);
 		
-		binder.setBean(currentObject);
+		if(currentObject != null)
+			binder.setBean(currentObject);
+		else{
+			binder.writeBeanIfValid(currentObject);
+		}
 		
 		setVisible(true);
 	}
 	
 	public void setChangeHandler(ChangeHandler h) {
-		save.addClickListener(e -> h.onChange());
+		save.addClickListener(e -> {
+			if(binder.isValid())
+				h.onChange();
+		});
 		delete.addClickListener(e -> h.onChange());
 	}
 	
