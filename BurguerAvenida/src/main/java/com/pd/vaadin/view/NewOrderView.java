@@ -1,17 +1,22 @@
 package com.pd.vaadin.view;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 
+import com.pd.dao.ClientDao;
 import com.pd.dao.OrderDao;
 import com.pd.dao.OrderLineDao;
 import com.pd.dao.ProductDao;
 import com.pd.dao.RestaurantDao;
+import com.pd.dao.ZoneDao;
 import com.pd.dao.security.UserDao;
+import com.pd.model.Client;
 import com.pd.model.Order;
 import com.pd.model.OrderLine;
 import com.pd.model.OrderType;
@@ -26,20 +31,20 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Page;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.spring.annotation.SpringView;
-import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.FooterCell;
 import com.vaadin.ui.themes.ValoTheme;
 
-@UIScope
+@Scope("prototype")
 @SpringView(name = NewOrderView.VIEW_ROUTE)
 public class NewOrderView extends VerticalLayout implements View {
 
@@ -57,17 +62,19 @@ public class NewOrderView extends VerticalLayout implements View {
 	private final UserDao userDao;
 	
 	private final OrderLineDao orderLineDao;
+	
+	private final ZoneDao zoneDao;
+	
+	private final ClientDao clientDao;
 
 	public static final String VIEW_ROUTE = "NewOrderView";
 	public static final String VIEW_NAME = "NewOrderView";
 
-	VerticalLayout options;
 	Grid<OrderLine> orderList;
 	Order order;
 	Set<OrderLine> orderLineSet = new HashSet<OrderLine>();
 	OrderLine orderline;
 	Button makeOrder = new Button("Open new order");
-	ListSelect<Zone> zones = new ListSelect<Zone>();
 
 	private boolean alreadyExists;
 	private FooterCell footer;
@@ -77,16 +84,166 @@ public class NewOrderView extends VerticalLayout implements View {
 	private Restaurant currentRestaurant;
 	private VerticalLayout verticalTitleLayout;
 	private OrderType orderType;
+	private ComboBox<Zone> zones = new ComboBox<>();
+	private ComboBox<Client> clients = new ComboBox<>();
+	
+	private HorizontalLayout hz;
+	private VerticalLayout productsLayout = new VerticalLayout();
+	private HorizontalLayout hzProductLayout = new HorizontalLayout();
+	private VerticalLayout orderListLayout = new VerticalLayout();
+	private TabSheet tabsheet = new TabSheet();
 
 	@Autowired
-	public NewOrderView(OrderDao orderDao, ProductDao productDao, RestaurantDao restaurantDao, UserDao userDao, OrderLineDao orderLineDao) {
+	public NewOrderView(OrderDao orderDao, ProductDao productDao, RestaurantDao restaurantDao, UserDao userDao, OrderLineDao orderLineDao, ZoneDao zoneDao, ClientDao clientDao) {
 		this.orderDao = orderDao;
 		this.productDao = productDao;
 		this.restaurantDao = restaurantDao;
 		this.userDao = userDao;
 		this.orderLineDao = orderLineDao;
+		this.zoneDao = zoneDao;
+		this.clientDao = clientDao;
+	}
+	
+	private void loadLocalOrder() {
+		zones.setItems(zoneDao.findByRestaurant(currentRestaurant));
+		zones.setItemCaptionGenerator(zone -> zone.getDescription());
+		zones.setEmptySelectionAllowed(false);
+		zones.setWidth(300, Unit.PIXELS);
+		hz.addComponent(new Label("Zone: "));
+		hz.addComponent(zones);
+		
+		productsLayout.setCaption("Products");
+		orderListLayout.setCaption("Order List");
+		
+		loadImage();
+		buildOrderlist();
+		
+		tabsheet.addComponent(productsLayout);
+		tabsheet.addComponent(orderListLayout);
+		
+		addComponent(tabsheet);
+	}
+	
+	private void loadHomeOrder() {
+		clients.setItems((Collection<Client>) clientDao.findAll());
+		clients.setItemCaptionGenerator(c -> c.getName()+", "+c.getAddress()+", "+c.getPhoneNumber());
+		clients.setEmptySelectionAllowed(false);
+		clients.setWidth(400, Unit.PIXELS);
+		hz.addComponent(new Label("Client: "));
+		hz.addComponent(clients);
+		
+		productsLayout.setCaption("Products");
+		orderListLayout.setCaption("Order List");
+		
+		loadImage();
+		buildOrderlist();
+		
+		tabsheet.addComponent(productsLayout);
+		tabsheet.addComponent(orderListLayout);
+		
+		addComponent(tabsheet);
+	}
+	
+	private void loadAwayOrder() {
+		clients.setItems((Collection<Client>) clientDao.findAll());
+		clients.setItemCaptionGenerator(c -> c.getName()+", "+c.getAddress()+", "+c.getPhoneNumber());
+		clients.setEmptySelectionAllowed(false);
+		clients.setWidth(400, Unit.PIXELS);
+		hz.addComponent(new Label("Client: "));
+		hz.addComponent(clients);
+		
+		productsLayout.setCaption("Products");
+		orderListLayout.setCaption("Order List");
+		
+		loadImage();
+		buildOrderlist();
+		
+		tabsheet.addComponent(productsLayout);
+		tabsheet.addComponent(orderListLayout);
+		
+		addComponent(tabsheet);
 	}
 
+	private void buildOrderlist() {
+		orderList = new Grid<OrderLine>();
+		orderList.addColumn(OrderLine::getProduct).setCaption("Product name").setId("productname");
+		orderList.addColumn(OrderLine::getAmount).setCaption("Amount").setId("amount");
+		orderList.addColumn(OrderLine::getTotal).setCaption("Total").setId("total");
+		orderList.getColumn("amount").setWidth(100);
+		orderList.getColumn("total").setWidth(100);
+		footer = orderList.appendFooterRow().join(
+				orderList.getColumn("productname"),
+				orderList.getColumn("amount"),
+				orderList.getColumn("total")
+				);
+		orderListLayout.setSizeFull();
+		orderList.setWidth(100, Unit.PERCENTAGE);
+		orderList.setHeight(240, Unit.PIXELS);
+		order = new Order();
+		orderList.addAttachListener(event -> {
+			orderList.setItems(orderLineSet);
+			calculateLinesTotal();
+		});
+		orderList.addItemClickListener(event -> {
+			OrderLine ol = event.getItem();
+			if(ol != null) {
+				if(ol.getAmount() > 1)
+					ol.setAmount(ol.getAmount()-1);
+				else {
+					orderLineSet.removeIf(p->p.equals(ol));
+					orderList.setItems(orderLineSet);
+				}
+				calculateLinesTotal();
+			}
+		});
+		orderListLayout.addComponent(orderList);
+		
+		makeOrder.addClickListener(event -> {
+			if(orderLineSet.isEmpty())
+				showNotification(new Notification("Order cant be empty!"));
+			else if (orderType == OrderType.LOCAL && !zones.getSelectedItem().isPresent()) {
+					showNotification(new Notification("Zone cant be empty!"));
+			}
+			else if (orderType == OrderType.HOMEDELIVERY && !clients.getSelectedItem().isPresent()) {
+					showNotification(new Notification("Client cant be empty!"));
+			}
+			else if (orderType == OrderType.TOTAKEAWAY && !clients.getSelectedItem().isPresent()) {
+					showNotification(new Notification("Client cant be empty!"));
+			} else {
+				order.setLines(orderLineSet);
+				order.setRestaurant(currentRestaurant);
+				order.setType(orderType);
+				if(orderType.equals(OrderType.LOCAL)) {
+					order.setZone(zones.getSelectedItem().get());
+				}
+				if(orderType.equals(OrderType.HOMEDELIVERY)) {
+					order.setClient(clients.getSelectedItem().get());
+				}
+				if(orderType.equals(OrderType.TOTAKEAWAY)) {
+					order.setClient(clients.getSelectedItem().get());
+				}
+				order = orderDao.save(order);
+				StringBuilder sb = new StringBuilder();
+				sb.append(orderType.toString());
+				sb.append("Order ID:" +order.getId()+"\n");
+				for(OrderLine ol: orderLineSet) {
+					ol.setOrderObject(order);
+					ol.setIsInKitchen(true);
+					orderLineDao.save(ol);
+					sb.append(ol.getProduct()+", # "+ol.getAmount()+"\n");
+				}
+				makeBroadcast(sb.toString());
+				order = new Order();
+				orderLineSet.clear();
+				orderList.setItems(orderLineSet);
+				calculateLinesTotal();
+				showNotification(new Notification("Submitting order"));
+			}
+		});
+		orderListLayout.addComponent(makeOrder);
+		orderList.setHeight(600, Unit.PIXELS);
+	}
+	
 	@PostConstruct
 	void init() {
 		this.setResponsive(true);
@@ -97,96 +254,12 @@ public class NewOrderView extends VerticalLayout implements View {
 		verticalTitleLayout.setMargin(new MarginInfo(false, false, false, true));
 		addComponent(verticalTitleLayout);
 		loadRestaurant();
-		if(currentRestaurant != null) {
-			
-			HorizontalLayout todo = new HorizontalLayout();
-			todo.setSizeFull();
-			
-			//OrderList
-			VerticalLayout orderListLayout = new VerticalLayout();
-			orderList = new Grid<OrderLine>();
-			orderList.addColumn(OrderLine::getProduct).setCaption("Product name").setId("productname");
-			orderList.addColumn(OrderLine::getAmount).setCaption("Amount").setId("amount");
-			orderList.addColumn(OrderLine::getTotal).setCaption("Total").setId("total");
-			orderList.getColumn("productname").setExpandRatio(1);
-			orderList.getColumn("amount").setWidth(100);
-			orderList.getColumn("total").setWidth(100);
-			footer = orderList.appendFooterRow().join(
-					orderList.getColumn("productname"),
-					orderList.getColumn("amount"),
-					orderList.getColumn("total")
-					);
-			orderListLayout.setSizeFull();
-			orderList.setWidth(100, Unit.PERCENTAGE);
-			orderList.setHeight(240, Unit.PIXELS);
-			order = new Order();
-			orderList.addAttachListener(event -> {
-				orderList.setItems(orderLineSet);
-				calculateLinesTotal();
-			});
-			orderList.addItemClickListener(event -> {
-				OrderLine ol = event.getItem();
-				if(ol != null) {
-					if(ol.getAmount() > 1)
-						ol.setAmount(ol.getAmount()-1);
-					else {
-						orderLineSet.removeIf(p->p.equals(ol));
-						orderList.setItems(orderLineSet);
-					}
-					calculateLinesTotal();
-				}
-			});
-			orderListLayout.addComponent(orderList);
-			
-			options = new VerticalLayout();
-			options.setResponsive(true);
-			options.setWidth(100, Unit.PERCENTAGE);
-			
-			makeOrder.addClickListener(event -> {
-				if(orderLineSet.isEmpty())
-					showNotification(new Notification("Order cant be empty!"));
-				else {
-					order.setLines(orderLineSet);
-					order.setRestaurant(currentRestaurant);
-					order.setType(orderType);
-					order = orderDao.save(order);
-					StringBuilder sb = new StringBuilder();
-					sb.append("Order ID:" +order.getId()+"\n");
-					for(OrderLine ol: orderLineSet) {
-						ol.setOrderObject(order);
-						orderLineDao.save(ol);
-						sb.append(ol.getProduct()+", # "+ol.getAmount()+"\n");
-					}
-					/*try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}*/
-					makeBroadcast(sb.toString());
-					order = new Order();
-					orderLineSet.clear();
-					orderList.setItems(orderLineSet);
-					calculateLinesTotal();
-					showNotification(new Notification("Submitting order"));
-				}
-			});
-			orderListLayout.addComponent(makeOrder);
-			todo.addComponent(options);
-			todo.addComponent(orderListLayout);
-			orderList.setHeight(600, Unit.PIXELS);
-			todo.setExpandRatio(options, 2.0f);
-			todo.setExpandRatio(orderListLayout, 1.0f);
-			addComponent(todo);
-
-		}
+		
 	}
 	
-	private void makeBroadcast(/*Set<OrderLine> lines*/String msg) {
+	private void makeBroadcast(String msg) {
 		getSession().lock();
-		//System.out.println("A enviar: " +lines.toString());
 		Broadcaster.broadcast(msg);
-		//System.out.println("Enviado: " +lines.toString());
 		getSession().unlock();
 	}
 
@@ -225,8 +298,10 @@ public class NewOrderView extends VerticalLayout implements View {
 			panel.setSizeUndefined();
 			panel.setCaption(p.getName());
 			panel.setContent(image);
-			options.addComponent(panel);
+			
+			hzProductLayout.addComponent(panel);
 		}
+		productsLayout.addComponent(hzProductLayout);
 	}
 	
 	private void loadRestaurant() {
@@ -242,7 +317,6 @@ public class NewOrderView extends VerticalLayout implements View {
 			if(currentRestaurant == null) {
 				labelRestaurant = new Label("Current user "+ currentUser.getUsername().toUpperCase() +" doesnt work in any restaurant");
 				labelRestaurant.addStyleName(ValoTheme.LABEL_FAILURE);
-				//verticalTitleLayout.replaceComponent(labelRestaurant, labelRestaurant);
 			}
 			else {
 				labelRestaurant = new Label(
@@ -252,21 +326,42 @@ public class NewOrderView extends VerticalLayout implements View {
 				labelRestaurant.addStyleName(ValoTheme.LABEL_SUCCESS);
 			}
 			
-			HorizontalLayout hz = new HorizontalLayout(labelRestaurant);
+			hz = new HorizontalLayout(labelRestaurant);
 			//Buttons to chose order type
 			if(currentRestaurant != null) {
 				Label currentType = new Label();
 				btnLocal.addClickListener(event->{
 					orderType = OrderType.LOCAL;
-					currentType.setCaption("Type: " +orderType);
+					btnLocal.setEnabled(false);
+					btnDeliver.setEnabled(false);
+					btnTakeAway.setEnabled(false);
+					
+					btnDeliver.setVisible(false);
+					btnTakeAway.setVisible(false);
+					
+					loadLocalOrder();
 				});
 				btnDeliver.addClickListener(event->{
 					orderType = OrderType.HOMEDELIVERY;
-					currentType.setCaption("Type: " +orderType);
+					btnLocal.setEnabled(false);
+					btnDeliver.setEnabled(false);
+					btnTakeAway.setEnabled(false);
+					
+					btnLocal.setVisible(false);
+					btnTakeAway.setVisible(false);
+					
+					loadHomeOrder();
 				});
 				btnTakeAway.addClickListener(event->{
 					orderType = OrderType.TOTAKEAWAY;
-					currentType.setCaption("Type: " +orderType);
+					btnLocal.setEnabled(false);
+					btnDeliver.setEnabled(false);
+					btnTakeAway.setEnabled(false);
+					
+					btnLocal.setVisible(false);
+					btnDeliver.setVisible(false);
+					
+					loadAwayOrder();
 				});
 				hz.addComponent(btnLocal);
 				hz.addComponent(btnDeliver);
@@ -279,10 +374,7 @@ public class NewOrderView extends VerticalLayout implements View {
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-		if(currentRestaurant != null) {
-			options.removeAllComponents();
-			loadImage();
-		}
+		
 	}
 
 }
