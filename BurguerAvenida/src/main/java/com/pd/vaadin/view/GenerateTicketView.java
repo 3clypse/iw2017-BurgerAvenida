@@ -1,4 +1,4 @@
-package com.pd.vaadin;
+package com.pd.vaadin.view;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -102,7 +102,7 @@ public class GenerateTicketView extends VerticalLayout implements View {
 	@PostConstruct
 	void init() {
 		this.setResponsive(true);
-		Label header = new Label("Generate Ticker View");
+		Label header = new Label("Generate Ticker");
 		header.addStyleName(ValoTheme.LABEL_H2);
 		header.addStyleName(ValoTheme.LABEL_NO_MARGIN);
 		verticalTitleLayout = new VerticalLayout(new HorizontalLayout(header));
@@ -164,7 +164,6 @@ public class GenerateTicketView extends VerticalLayout implements View {
 				table.addCell("Description");
 				table.addCell("U.P.");
 				table.addCell("Total");
-				//table.setWidthPercentage(288 / 4.23f);
 				table.setWidths(new int[]{1, 3, 1, 1});
 		        currentOrder.getLines().forEach(l->{
 		        	table.addCell(l.getAmount().toString());

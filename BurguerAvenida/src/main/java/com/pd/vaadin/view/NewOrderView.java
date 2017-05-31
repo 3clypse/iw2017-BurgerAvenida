@@ -169,8 +169,6 @@ public class NewOrderView extends VerticalLayout implements View {
 		orderList.addColumn(OrderLine::getProduct).setCaption("Product name").setId("productname");
 		orderList.addColumn(OrderLine::getAmount).setCaption("Amount").setId("amount");
 		orderList.addColumn(OrderLine::getTotal).setCaption("Total").setId("total");
-		orderList.getColumn("amount").setWidth(100);
-		orderList.getColumn("total").setWidth(100);
 		footer = orderList.appendFooterRow().join(
 				orderList.getColumn("productname"),
 				orderList.getColumn("amount"),
