@@ -63,7 +63,7 @@ public class CloseOrderView extends VerticalLayout implements View {
 	private OrderType orderType;
 	private ComboBox<Order> currentOrders = new ComboBox<>();
 	Set<OrderLine> orderLines = new HashSet<OrderLine>();
-	Grid<OrderLine> orderList = new Grid<>();
+	Grid<OrderLine> orderList = new Grid<>("Closed Orders");
 	private FooterCell footer;
 	private Double total;
 
