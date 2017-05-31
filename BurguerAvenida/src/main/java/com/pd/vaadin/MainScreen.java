@@ -134,6 +134,12 @@ public class MainScreen extends HorizontalLayout implements ViewDisplay {
 							"Close Order", 
 							CloseOrderView.VIEW_NAME,
 							VaadinIcons.HOME));
+			
+			menuItemsLayout.addComponent(
+					createNavigationButton(
+							"Generate Ticket", 
+							GenerateTicketView.VIEW_NAME,
+							VaadinIcons.HOME));
 		}
 			
 		if(securityService.hasRole(RoleName.ROLE_ATTENDANT)) {
