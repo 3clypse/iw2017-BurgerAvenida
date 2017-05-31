@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pd.dao.RestaurantDao;
 import com.pd.dao.ZoneDao;
-import com.pd.model.Client;
 import com.pd.model.Restaurant;
 import com.pd.model.Zone;
 import com.pd.model.ZoneType;
@@ -76,9 +75,10 @@ public class ZoneEditor extends FormLayout {
 		addComponents(zonetype, restaurants, description, actions);
 		
 		binder = new BeanValidationBinder<>(Zone.class);
-		binder.forField(restaurants).bind("restaurant");
-		binder.forField(zonetype).bind("type");
-		binder.bindInstanceFields(this);
+		
+		binder.forField(restaurants).bind(Zone::getRestaurant, Zone::setRestaurant);
+		
+		binder.forField(zonetype).bind(Zone::getType, Zone::setType);
 		
 		binder.forField(description)
 		.asRequired("Cant be empty")
@@ -92,7 +92,6 @@ public class ZoneEditor extends FormLayout {
 		save.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
-		//save.addClickListener(e -> repository.save(currentObject));
 		save.addClickListener(e -> {
 			if(binder.isValid())
 				repository.save(currentObject);
@@ -123,7 +122,11 @@ public class ZoneEditor extends FormLayout {
 		}
 		cancel.setVisible(persisted);
 		
-	    binder.setBean(currentObject);
+		if(currentObject != null)
+			binder.setBean(currentObject);
+		else{
+			binder.writeBeanIfValid(currentObject);
+		}
 		
 		setVisible(true);
 
@@ -131,7 +134,10 @@ public class ZoneEditor extends FormLayout {
 	}
 
 	public void setChangeHandler(ChangeHandler h) {
-		save.addClickListener(e -> h.onChange());
+		save.addClickListener(e -> {
+			if(binder.isValid())
+				h.onChange();
+		});
 		delete.addClickListener(e -> h.onChange());
 	}
 	
