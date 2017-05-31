@@ -23,6 +23,13 @@ jar {
 	version = '0.0.1-SNAPSHOT'
 }
 
+/*apply plugin: 'war'
+
+war {
+	baseName = 'BurguerAvenida'
+	version = '0.0.1-SNAPSHOT'
+}*/
+
 sourceCompatibility = 1.8
 
 repositories {
@@ -52,5 +59,3 @@ dependencyManagement {
 		mavenBom "com.vaadin:vaadin-bom:8.0.0"
 	}
 }
-
-//apply plugin: 'war'

@@ -1,10 +1,8 @@
 package com.pd;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.pd.dao.OrderDao;
 import com.pd.dao.security.RoleDao;
@@ -15,11 +13,16 @@ import com.pd.service.security.RoleService;
 import com.pd.service.security.UserService;
 
 @SpringBootApplication
-public class BurguerAvenidaApplication implements CommandLineRunner {
+public class BurguerAvenidaApplication /*extends SpringBootServletInitializer*//*implements CommandLineRunner*/ {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BurguerAvenidaApplication.class, args);
 	}
+	
+	/*@Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(BurguerAvenidaApplication.class);
+    }*/
 
 	@Autowired
 	RoleService roleService;
@@ -42,9 +45,9 @@ public class BurguerAvenidaApplication implements CommandLineRunner {
 	@Autowired
 	OrderDao orderDao;
 	
-	@Override
+	/*@Override
 	@Transactional
-	public void run(String... args) throws Exception {
+	public void run(String... args) throws Exception {*/
 		//Data first load
 		
 		//Roles
@@ -121,5 +124,5 @@ public class BurguerAvenidaApplication implements CommandLineRunner {
 		Date date = new Date();
 		System.out.println(orderDao.findByDate(dt1.format(date), OrderStatus.CLOSED));*/
 		
-	}
+	//}
 }
