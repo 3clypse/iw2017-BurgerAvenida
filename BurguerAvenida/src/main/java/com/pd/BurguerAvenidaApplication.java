@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.pd.dao.OrderDao;
 import com.pd.dao.security.RoleDao;
 import com.pd.dao.security.UserDao;
 import com.pd.service.RestaurantService;
@@ -37,6 +38,9 @@ public class BurguerAvenidaApplication implements CommandLineRunner {
 	
 	@Autowired
 	RoleDao roleDao;
+	
+	@Autowired
+	OrderDao orderDao;
 	
 	@Override
 	@Transactional
@@ -110,6 +114,12 @@ public class BurguerAvenidaApplication implements CommandLineRunner {
 		zoneService.create(ZoneType.TERRACE, "Mesa terraza 3", aB2);
 		zoneService.create(ZoneType.TERRACE, "Mesa terraza 4", aB2);*/
 		
+		/*System.out.println(orderDao.findAllDates().toString());
+		
+		SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
+		//System.out.println(dt1.format());
+		Date date = new Date();
+		System.out.println(orderDao.findByDate(dt1.format(date), OrderStatus.CLOSED));*/
 		
 	}
 }
