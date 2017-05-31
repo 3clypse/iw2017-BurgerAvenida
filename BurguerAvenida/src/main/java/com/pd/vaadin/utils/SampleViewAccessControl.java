@@ -16,16 +16,24 @@ public class SampleViewAccessControl implements ViewAccessControl {
 
 	@Override
 	public boolean isAccessGranted(UI ui, String beanName) {
-		//System.out.println("COMPROBANDO " + beanName + " PARA USUARIO CON ROLES: " +securityService.roles());
-		if(securityService.hasRole(RoleName.ROLE_MANAGER)){
+		if(securityService.hasRole(RoleName.ROLE_MANAGER))
 			return true;
-		} else if (beanName.equals("homeView")) {
-			return true;
-		} else if (beanName.equals("aboutView")){
+		else if (beanName.equals("updateOrderView") ||
+				beanName.equals("closeOrderView") ||
+				beanName.equals("generateTicketView") ||
+				beanName.equals("newOrderView"))
 			return securityService.hasRole(RoleName.ROLE_WAITER) || securityService.hasRole(RoleName.ROLE_ATTENDANT);
-		} else if (beanName.equals("userView")){
+		else if (beanName.equals("clientView") ||
+			 beanName.equals("orderView") ||
+			 beanName.equals("productSimpleView") ||
+			 beanName.equals("productCompositeView") ||
+			 beanName.equals("productFamilyView") ||
+			 beanName.equals("restaurantView") ||
+			 beanName.equals("userView") ||
+			 beanName.equals("zoneView")) 
 			return securityService.hasRole(RoleName.ROLE_MANAGER);
-		} 
+		else if (beanName.equals("checkoutView"))
+			return securityService.hasRole(RoleName.ROLE_ATTENDANT);
 		else return true;
 	}
 	
