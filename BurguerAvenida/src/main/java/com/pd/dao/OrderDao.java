@@ -12,7 +12,6 @@ import com.pd.model.OrderType;
 import com.pd.model.Restaurant;
 
 public interface OrderDao extends CrudRepository<Order, Integer> {
-	//List<Order> findByStatusStartsWithIgnoreCase(OrderStatus status);
 	@Query("SELECT o FROM orders o WHERE o.status = :orderstatus and o.restaurant = :restaurant")
 	List<Order> findByStatus(@Param("orderstatus") OrderStatus orderstatus, @Param("restaurant") Restaurant restaurant);
 	@Query("SELECT o FROM orders o WHERE o.status = :orderstatus and o.type = :ordertype and o.restaurant = :restaurant")
@@ -20,4 +19,10 @@ public interface OrderDao extends CrudRepository<Order, Integer> {
 			@Param("orderstatus") OrderStatus orderstatus, 
 			@Param("ordertype") OrderType ordertype,
 			@Param("restaurant") Restaurant restaurant);
+	
+	@Query("SELECT DISTINCT SUBSTRING(d.closedAt, 1, 10) FROM orders d WHERE d.status = 'CLOSED'")
+    List<String> findAllDates();
+	
+	@Query("SELECT o FROM orders o WHERE SUBSTRING(o.closedAt, 1, 10) = :date AND o.status = :orderstatus")
+	List<Order> findByDate(@Param("date") String string, @Param("orderstatus") OrderStatus orderstatus);
 }
