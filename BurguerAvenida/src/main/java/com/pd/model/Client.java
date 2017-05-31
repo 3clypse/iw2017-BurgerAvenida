@@ -74,5 +74,10 @@ public class Client implements Serializable {
 	public void setAddress(String address) {
 		this.address = address;
 	}
+
+	@Override
+	public String toString() {
+		return getName()+", "+getAddress()+", "+getPhoneNumber();
+	}
 	
 }
