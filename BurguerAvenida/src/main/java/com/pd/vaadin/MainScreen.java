@@ -7,7 +7,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.pd.model.security.RoleName;
 import com.pd.service.security.SecurityService;
+import com.pd.vaadin.view.CheckoutView;
 import com.pd.vaadin.view.CloseOrderView;
+import com.pd.vaadin.view.GenerateTicketView;
 import com.pd.vaadin.view.HomeView;
 import com.pd.vaadin.view.NewOrderView;
 import com.pd.vaadin.view.UpdateOrderView;
@@ -64,7 +66,10 @@ public class MainScreen extends HorizontalLayout implements ViewDisplay {
 	@Override
     public void attach() {
         super.attach();
-        this.getUI().getNavigator().navigateTo(NewOrderView.VIEW_NAME);
+        if(securityService.hasRole(RoleName.ROLE_MANAGER))
+        	this.getUI().getNavigator().navigateTo(UserView.VIEW_NAME);
+        else
+        	this.getUI().getNavigator().navigateTo(NewOrderView.VIEW_NAME);
         buildMenu();
     }
 	
@@ -109,40 +114,54 @@ public class MainScreen extends HorizontalLayout implements ViewDisplay {
 		menuPart.addComponent(showMenu);
 		
 		menuItemsLayout = new CssLayout();
-		if(securityService.hasRole(RoleName.ROLE_ATTENDANT)
-		|| securityService.hasRole(RoleName.ROLE_WAITER)) {
+		if(securityService.hasRole(RoleName.ROLE_ATTENDANT) || securityService.hasRole(RoleName.ROLE_WAITER)) {
+			Button button = new Button("WAITTER ZONE");
+			button.setPrimaryStyleName(ValoTheme.MENU_ITEM);
+			button.setEnabled(false);
+			menuItemsLayout.addComponent(button);
+			
 			menuItemsLayout.addComponent(
 					createNavigationButton(
 							"Kitchen", 
 							HomeView.VIEW_NAME,
-							VaadinIcons.HOME));
+							VaadinIcons.LIST));
 			
 			menuItemsLayout.addComponent(
 					createNavigationButton(
 							"New Order", 
 							NewOrderView.VIEW_NAME,
-							VaadinIcons.HOME));
+							VaadinIcons.MONEY));
 			
 			menuItemsLayout.addComponent(
 					createNavigationButton(
 							"Update Order", 
 							UpdateOrderView.VIEW_NAME,
-							VaadinIcons.HOME));
+							VaadinIcons.MONEY_EXCHANGE));
 			
 			menuItemsLayout.addComponent(
 					createNavigationButton(
 							"Close Order", 
 							CloseOrderView.VIEW_NAME,
-							VaadinIcons.HOME));
+							VaadinIcons.CLOSE_CIRCLE));
 			
 			menuItemsLayout.addComponent(
 					createNavigationButton(
 							"Generate Ticket", 
 							GenerateTicketView.VIEW_NAME,
-							VaadinIcons.HOME));
+							VaadinIcons.TICKET));
 		}
 			
 		if(securityService.hasRole(RoleName.ROLE_ATTENDANT)) {
+			Button button = new Button("ATTENDANT ZONE");
+			button.setPrimaryStyleName(ValoTheme.MENU_ITEM);
+			button.setEnabled(false);
+			menuItemsLayout.addComponent(button);
+			
+			menuItemsLayout.addComponent(
+					createNavigationButton(
+							"Checkout", 
+							CheckoutView.VIEW_NAME,
+							VaadinIcons.MONEY_DEPOSIT));
 			
 		}
 			
