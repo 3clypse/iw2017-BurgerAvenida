@@ -76,11 +76,7 @@ public class ClientEditor extends VerticalLayout {
 		
 		binder.forField(phoneNumber)
 		.asRequired("Cant be empty")
-		.withValidator(new StringLengthValidator(
-				"Phonenumber must have 9 digits", 9, 9))
-		.withNullRepresentation("")
-		  .withConverter(
-		    new StringToIntegerConverter("Must enter a number"))
+		  .withConverter(new StringToIntegerConverter("Must enter a number"))
 		  .bind(Client::getPhoneNumber, Client::setPhoneNumber);
 
 		setSpacing(true);
