@@ -76,6 +76,7 @@ public class ClientEditor extends VerticalLayout {
 		
 		binder.forField(phoneNumber)
 		.asRequired("Cant be empty")
+		  .withNullRepresentation("")
 		  .withConverter(new StringToIntegerConverter("Must enter a number"))
 		  .bind(Client::getPhoneNumber, Client::setPhoneNumber);
 
