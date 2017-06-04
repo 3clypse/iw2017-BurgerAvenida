@@ -1,6 +1,7 @@
 package com.pd;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,7 @@ public class BurguerAvenidaApplicationTests {
 		Assert.assertEquals(order2.getId(), order.getId());
 	}
 	
-	@Test
+	@Ignore
 	public void testOrderLine(){
 		Product p = new Product();
 				p.setName("Zumo");
